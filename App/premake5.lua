@@ -11,7 +11,7 @@ project "App"
 
     includedirs (
         "%{IncludeDir.Renderer}",
-        "./src/"      
+        path.join(_SCRIPT_DIR,"src")
     );
 
     files { 

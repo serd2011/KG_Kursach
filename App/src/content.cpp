@@ -2,6 +2,7 @@
 #include "content.h"
 
 #include "config.h"
+#include "stuff.h"
 
 LRESULT CALLBACK contentWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
@@ -23,18 +24,31 @@ ATOM RegisterContentWindowClass(HINSTANCE hInstance, LPCWSTR name) {
 	return RegisterClassExW(&wcexContent);
 }
 
-LRESULT contentWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
+LRESULT CALLBACK contentWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
 	switch (message) {
 	case WM_CREATE:
+		stuff::init();
+		break;
+	case WM_SIZE:
+		{
+			RECT rect;
+			GetClientRect(hWnd, &rect);
+			int width = rect.right - rect.left;
+			int height = rect.bottom - rect.top;
+
+			stuff::changeDimensions(width, height);
+		}
 		break;
 	case WM_PAINT:
 		{
 			PAINTSTRUCT ps;
 			HDC hdc = BeginPaint(hWnd, &ps);
 			// Рисование фигур
+			stuff::draw(hdc);
 			EndPaint(hWnd, &ps);
 		}
 		break;
+
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		break;

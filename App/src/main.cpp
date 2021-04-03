@@ -4,9 +4,9 @@
 #include "aside.h"
 #include "content.h"
 
-constexpr auto IDN_MAIN_WINDOW = L"MAIN";
-constexpr auto IDN_ASIDE = L"ASIDE";
-constexpr auto IDN_CONTENT = L"CONTENT";
+constexpr auto IDN_MAIN_WINDOW = TEXT("MAIN");
+constexpr auto IDN_ASIDE = TEXT("ASIDE");
+constexpr auto IDN_CONTENT = TEXT("CONTENT");
 
 #define IDC_ASIDE	0x001
 #define IDC_CONTENT 0x002

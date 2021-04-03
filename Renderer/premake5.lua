@@ -10,12 +10,12 @@ project "Renderer"
     objdir (objdirPath .. "/%{prj.name}")
 
     includedirs (
-        "./src/"
+       path.join(_SCRIPT_DIR,"src")
     );
 
     files { 
         "./src/**.h",
-        "./src/**.cpp",
+        "./src/**.cpp"
     }
 
     filter "configurations:Debug"

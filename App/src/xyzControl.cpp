@@ -49,7 +49,7 @@ ATOM RegisterXYZControlWindowClass(HINSTANCE hInstance) {
 #define IDC_Y 0x002
 #define IDC_Z 0x003
 
-LRESULT xyzControlWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
+LRESULT CALLBACK xyzControlWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
 	switch (message) {
 	case WM_NCCREATE:
 		{
