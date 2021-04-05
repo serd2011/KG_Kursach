@@ -43,8 +43,8 @@ ML::mat4<T> ML::rotate(const mat4<T>& m, const vec4<T>& v) {
 
 template<typename T>
 ML::mat4<T> ML::scale(const mat4<T>& m, const vec4<T>& v) {
-	return m * mat4<T>({ v[0],0,0,1 },
-					   { 0,v[1],0,1 },
-					   { 0,0,v[2],1 },
+	return m * mat4<T>({ v[0],0,0,0 },
+					   { 0,v[1],0,0 },
+					   { 0,0,v[2],0 },
 					   { 0,0,0,1 });
 }

@@ -61,10 +61,10 @@ inline ML::mat4<T>::mat4(const ML::mat4<T>& in) : data{ in.data[0] ,in.data[1],i
 template<typename T>
 template<typename U>
 inline ML::mat4<T>::mat4(const ML::mat4<U>& in) : data{
-	static_cast<ML::vec4<U>>(in.data[0]),
-	static_cast<ML::vec4<U>>(in.data[1]),
-	static_cast<ML::vec4<U>>(in.data[2]),
-	static_cast<ML::vec4<U>>(in.data[3])
+	static_cast<ML::vec4<T>>(in.data[0]),
+	static_cast<ML::vec4<T>>(in.data[1]),
+	static_cast<ML::vec4<T>>(in.data[2]),
+	static_cast<ML::vec4<T>>(in.data[3])
 } {}
 
 template<typename T>
@@ -79,10 +79,10 @@ inline ML::mat4<T>& ML::mat4<T>::operator=(const ML::mat4<T>& in) {
 template<typename T>
 template<typename U>
 inline ML::mat4<T>& ML::mat4<T>::operator=(const ML::mat4<U>& in) {
-	data[0] = static_cast<ML::vec4<U>>(in.data[0]);
-	data[1] = static_cast<ML::vec4<U>>(in.data[1]);
-	data[2] = static_cast<ML::vec4<U>>(in.data[2]);
-	data[3] = static_cast<ML::vec4<U>>(in.data[3]);
+	data[0] = static_cast<ML::vec4<T>>(in.data[0]);
+	data[1] = static_cast<ML::vec4<T>>(in.data[1]);
+	data[2] = static_cast<ML::vec4<T>>(in.data[2]);
+	data[3] = static_cast<ML::vec4<T>>(in.data[3]);
 	return *this;
 }
 

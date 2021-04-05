@@ -11,7 +11,7 @@ Mesh::Mesh(const Mesh& other) :
 
 Mesh::~Mesh() {}
 
-Mesh::Mesh(const std::vector<ML::vec4<double>>& vertices, const std::vector<ML::vec3<size_t>>& faces, int color) :
+Mesh::Mesh(const std::vector<ML::vec4<double>>& vertices, const std::vector<ML::vec4<size_t>>& faces, int color) :
 	vertices(vertices),
 	faces(faces),
 	color(color) {}

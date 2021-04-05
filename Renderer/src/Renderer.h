@@ -6,7 +6,6 @@
 #include "Camera.h"
 #include "Scene.h"
 #include "algorithms/FloodFill.h"
-#include "algorithms/ZBuffer.h"
 
 namespace RNDR {
 

@@ -5,6 +5,6 @@ namespace stuff{
 
 	void init();
 	void draw(HDC);
-	void changeDimensions(size_t width, size_t height);
+	void changeDimensions(int width, int height);
 
 }

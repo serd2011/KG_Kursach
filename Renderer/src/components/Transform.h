@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../MathLib/vec3.h"
+#include "../MathLib/vec4.h"
 #include "../MathLib/matrixTransform.h"
 
 namespace RNDR {
@@ -14,9 +14,9 @@ namespace RNDR {
 			ML::vec4<double> scale = ML::vec4<double>(1, 1, 1);
 
 			ML::mat4<double> getTransform() const {
-				return ML::rotate(ML::mat4(1.0), rotation) *
-					ML::translate(ML::mat4(1.0), translation) *
-					ML::scale(ML::mat4(1.0), scale);
+				return ML::scale(ML::mat4(1.0), scale) *
+					ML::rotate(ML::mat4(1.0), rotation) *
+					ML::translate(ML::mat4(1.0), translation);
 			}
 
 		};

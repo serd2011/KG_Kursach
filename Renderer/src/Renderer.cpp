@@ -1,4 +1,4 @@
-#include "Renderer.h"
+п»ї#include "Renderer.h"
 
 #include <limits>
 #include <algorithm>
@@ -34,9 +34,9 @@ RNDR::Dimensions RNDR::Renderer::getDimensions() {
 
 void RNDR::Renderer::render(const Scene& scene, const Camera& camera) {
 
-	size_t pixelCount = (static_cast<size_t>(width) * static_cast<size_t>(height));
+	size_t pixelCount = (static_cast<size_t>(this->width) * static_cast<size_t>(this->height));
 	std::fill(this->zBuffer, this->zBuffer + pixelCount, std::numeric_limits<int>::min());
-	std::fill(this->screen, this->screen + pixelCount, 0x00FFFFFF);
+	std::fill(this->screen, this->screen + pixelCount, 0xE1E1E1);
 
 	auto transfrom = scene.transforms.begin();
 	for (auto mesh = scene.meshes.begin(); mesh != scene.meshes.end(); mesh++, transfrom++) {
@@ -48,22 +48,36 @@ void RNDR::Renderer::render(const Scene& scene, const Camera& camera) {
 				mesh->vertices[vertexIndices->operator[](1)],
 				mesh->vertices[vertexIndices->operator[](2)]
 				) * transfromMatrix;
-			/*ML::vec4<double> normal = (face[0] - face[1]) * (face[0] - face[2]);
-			ML::vec4<double> lightDirection = ML::vec4<double>((face[0][0] + face[1][0] + face[2][0]) / 3.0, (face[0][1] + face[1][1] + face[2][1]) / 3.0, (face[0][2] + face[1][2] + face[2][2]) / 3.0) - scene.light.position;
+
+			ML::vec4<double> normal = ML::crossProduct((face[1] - face[0]), (face[2] - face[0]));
+			ML::vec4<double> lightDirection = face[0]-scene.light.position;
 			double illumination = ML::getAngle(normal, lightDirection);
-			*/
-			int color = mesh->color + (index * 10);
+			int b = static_cast<int>(std::round(static_cast<unsigned char>(mesh->color) * illumination));
+			int g = static_cast<int>(std::round(static_cast<unsigned char>(mesh->color >> 8) * illumination));
+			int r = static_cast<int>(std::round(static_cast<unsigned char>(mesh->color >> 16) * illumination));
+			b = std::max(std::min(r, 255), 0);
+			g = std::max(std::min(g, 255), 0);
+			r = std::max(std::min(b, 255), 0);
+			int color = b + (static_cast<int>(g) << 8) + (static_cast<int>(r) << 16);
+
+			color = mesh->color;
+
 			algorithms::floodFill(this->width, this->height, this->tmpScreen, face, color);
 			for (int i = 0; i < pixelCount; i++) {
-				if (this->tmpScreen[i] == color) {
-					// Проверить Z координату
-					this->screen[i] = color;
-				}
+				if (this->tmpScreen[i] != color - 1) {
+					int y = (i / this->width);
+					int x = i - (y * this->width);
+					int z = static_cast<int>((ML::tripleProduct(face[0], face[1], face[2]) - x * normal[0] - y * normal[1]) / (normal[2]));
+					if (z >= this->zBuffer[i]) {
+						this->zBuffer[i] = z;
+						this->screen[i] = this->tmpScreen[i];
+					}
+				}				
 			}
 		}
 	}
 
-	// Создание тени
+	// РЎРѕР·РґР°РЅРёРµ С‚РµРЅРё
 }
 
 int* RNDR::Renderer::getScreen() {

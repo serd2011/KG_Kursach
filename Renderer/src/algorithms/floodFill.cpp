@@ -4,13 +4,13 @@
 #include <queue>
 #include <algorithm>
 
-void drawLine(int* screen, int width, int x0, int y0, int x1, int y1, short color) {
+void drawLine(int* screen, int width, int height, int x0, int y0, int x1, int y1, int color) {
 	int dx = std::abs(x1 - x0), sx = x0 < x1 ? 1 : -1;
 	int dy = std::abs(y1 - y0), sy = y0 < y1 ? 1 : -1;
 	int err = (dx > dy ? dx : -dy) / 2;
 	int e2 = err;
 	while (true) {
-		if (y0 >= 0 && x0 >= 0) screen[width * y0 + x0] = color;
+		if (y0 >= 0 && x0 >= 0 && y0 < height && x0 < width) screen[width * y0 + x0] = color;
 		if (x0 == x1 && y0 == y1) break;
 		e2 = err;
 		if (e2 > -dx) { err -= dy; x0 += sx; }
@@ -28,12 +28,21 @@ std::queue<Point> queue{};
 void RNDR::algorithms::floodFill(int width, int height, int* screen, const ML::mat4<int>& vertices, int color) {
 	std::fill(screen, screen + (static_cast<size_t>(width) * static_cast<size_t>(height)), color - 1);
 
-	drawLine(screen, width, vertices[0][0], vertices[0][1], vertices[1][0], vertices[1][1], color + 1);
-	drawLine(screen, width, vertices[0][0], vertices[0][1], vertices[2][0], vertices[2][1], color + 1);
-	drawLine(screen, width, vertices[1][0], vertices[1][1], vertices[2][0], vertices[2][1], color + 1);
+	//drawLine(screen, width, height, vertices[0][0], vertices[0][1], vertices[1][0], vertices[1][1], color);
+	//drawLine(screen, width, height, vertices[0][0], vertices[0][1], vertices[2][0], vertices[2][1], color);
+	//drawLine(screen, width, height, vertices[1][0], vertices[1][1], vertices[2][0], vertices[2][1], color);
 
+	drawLine(screen, width, height, vertices[0][0], vertices[0][1], vertices[1][0], vertices[1][1], 0);
+	drawLine(screen, width, height, vertices[0][0], vertices[0][1], vertices[2][0], vertices[2][1], 0);
+	drawLine(screen, width, height, vertices[1][0], vertices[1][1], vertices[2][0], vertices[2][1], 0);
+
+	#ifdef a	
 	queue.push({ std::max((vertices[0][0] + vertices[1][0] + vertices[2][0]) / 3,0), std::max((vertices[0][1] + vertices[1][1] + vertices[2][1]) / 3,0) });
-	//queue.push({10,10});
+#else
+	queue.push({ std::max(std::min((vertices[0][0] + vertices[1][0] + vertices[2][0]) / 3, width - 1), 0), std::max(std::min((vertices[0][1] + vertices[1][1] + vertices[2][1]) / 3, height - 1), 0) });
+#endif
+
+
 	while (!queue.empty()) {
 		Point p = queue.front();
 		queue.pop();
@@ -46,7 +55,4 @@ void RNDR::algorithms::floodFill(int width, int height, int* screen, const ML::m
 		}
 	}
 
-	drawLine(screen, width, vertices[0][0], vertices[0][1], vertices[1][0], vertices[1][1], color);
-	drawLine(screen, width, vertices[0][0], vertices[0][1], vertices[2][0], vertices[2][1], color);
-	drawLine(screen, width, vertices[1][0], vertices[1][1], vertices[2][0], vertices[2][1], color);
 }

@@ -3,7 +3,6 @@
 
 #include <vector>
 
-#include "MathLib/vec3.h"
 #include "MathLib/mat4.h"
 
 #include "components/Mesh.h"
