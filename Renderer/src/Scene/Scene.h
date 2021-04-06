@@ -1,15 +1,16 @@
 #pragma once
-#include "all.h"
 
 #include <vector>
 
 #include "MathLib/mat4.h"
 
-#include "components/Mesh.h"
-#include "components/Light.h"
-#include "components/Transform.h"
+#include "Scene/components/Mesh.h"
+#include "Scene/components/Light.h"
+#include "Scene/components/Transform.h"
 
 namespace RNDR {
+
+	class Renderer;
 
 	class Scene {
 	public:

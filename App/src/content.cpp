@@ -43,7 +43,6 @@ LRESULT CALLBACK contentWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 		{
 			PAINTSTRUCT ps;
 			HDC hdc = BeginPaint(hWnd, &ps);
-			// Рисование фигур
 			stuff::draw(hdc);
 			EndPaint(hWnd, &ps);
 		}

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../MathLib/vec4.h"
+#include "MathLib/vec4.h"
 
 namespace RNDR {
 

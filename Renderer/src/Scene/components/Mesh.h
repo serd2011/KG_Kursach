@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include "../MathLib/vec4.h"
+#include "MathLib/vec4.h"
 
 namespace RNDR {
 

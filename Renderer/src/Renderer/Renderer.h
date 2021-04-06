@@ -1,11 +1,10 @@
 #pragma once
-#include "all.h"
 
 #include <functional>
 
-#include "Camera.h"
-#include "Scene.h"
-#include "algorithms/FloodFill.h"
+#include "Scene/Camera.h"
+#include "Scene/Scene.h"
+#include "Renderer/algorithms/FloodFill.h"
 
 namespace RNDR {
 
@@ -30,11 +29,11 @@ namespace RNDR {
 		int* getScreen();
 
 	private:
-		int width;
-		int height;
-		int* zBuffer;
-		int* screen;
-		int* tmpScreen;
+		int width = 0;
+		int height = 0;
+		int* zBuffer = nullptr;
+		int* screen = nullptr;
+		int* tmpScreen = nullptr;
 	};
 
 }

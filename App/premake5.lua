@@ -10,8 +10,8 @@ project "App"
     objdir (objdirPath .. "/%{prj.name}")
 
     includedirs (
-        "%{IncludeDir.Renderer}",
-        path.join(_SCRIPT_DIR,"src")
+        "%{wks.location}/Renderer/src",
+        "src"
     );
 
     files { 

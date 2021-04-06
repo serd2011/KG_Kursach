@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../MathLib/vec4.h"
-#include "../MathLib/matrixTransform.h"
+#include "MathLib/vec4.h"
+#include "MathLib/matrixTransform.h"
 
 namespace RNDR {
 

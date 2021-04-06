@@ -2,6 +2,7 @@
 #include "aside.h"
 
 #include "config.h"
+#include "stuff.h"
 #include "xyzControl.h"
 
 static HWND hWndButton;
@@ -205,20 +206,22 @@ LRESULT CALLBACK AsideWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			if (fugireNum > 2) break;
 			if (fugireNum == 2) {
 				// Обновить положение света
-				break;
+				stuff::changeLight(data->x, data->y, data->z);
+			} else {
+				int xyzNum = idc & 0xF;
+				switch (xyzNum) {
+				case 2:
+					// Обновить положение
+					break;
+				case 3:
+					// Обновить поворот
+					break;
+				case 4:
+					// Обновить масштаб
+					break;
+				}
 			}
-			int xyzNum = idc & 0xF;
-			switch (xyzNum) {
-			case 2:
-				// Обновить положение
-				break;
-			case 3:
-				// Обновить поворот
-				break;
-			case 4:
-				// Обновить масштаб
-				break;
-			}
+			SendMessage(GetParent(hWnd), ASIDE_REQUEST_REDRAW, 0, 0);
 		}
 		break;	
 	case WM_DESTROY:

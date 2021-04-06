@@ -4,6 +4,8 @@
 #include "aside.h"
 #include "content.h"
 
+#include "init.h"
+
 constexpr auto IDN_MAIN_WINDOW = TEXT("MAIN");
 constexpr auto IDN_ASIDE = TEXT("ASIDE");
 constexpr auto IDN_CONTENT = TEXT("CONTENT");
@@ -22,6 +24,9 @@ LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow) {
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
+
+	// Инициализация рендерера
+	RNDR::init();
 
 	RegisterWindowClass(hInstance);
 	RegisterAsideWindowClass(hInstance, IDN_ASIDE);
@@ -100,7 +105,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 			SetWindowPos(hWndContent, nullptr, asideWidth, 0, (mainWidth - asideWidth), mainHeight, SWP_NOZORDER);
 			RedrawWindow(hWnd, NULL, NULL, RDW_UPDATENOW);
 		}
-		break;
+		break;	
 	case WM_GETMINMAXINFO:
 		{
 			LPMINMAXINFO lpMMI = (LPMINMAXINFO)lParam;
@@ -109,6 +114,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 		}
 		break;
 	case WM_COMMAND:
+		break;
+	case ASIDE_REQUEST_REDRAW:
+		RedrawWindow(hWnd, NULL, NULL, RDW_UPDATENOW);
 		break;
 	case WM_PAINT:
 		break;

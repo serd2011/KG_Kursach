@@ -10,7 +10,7 @@ project "Renderer"
     objdir (objdirPath .. "/%{prj.name}")
 
     includedirs (
-       path.join(_SCRIPT_DIR,"src")
+       "src"
     );
 
     files { 
@@ -28,9 +28,3 @@ project "Renderer"
 
     filter "action:vs*"
         buildoptions {"/utf-8"}
-
-    postbuildcommands { 
-        "{COPYDIR} \"./src/*.h\" \"" .. bindirPath .. "/%{prj.name}/include/\""
-    }
-
-IncludeDir["Renderer"] = bindirPath .. "/Renderer/include/"
