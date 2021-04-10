@@ -8,4 +8,6 @@ namespace stuff{
 	void changeDimensions(int width, int height);
 	void changeLight(int, int, int);
 
+	void resetAll();
+
 }

@@ -3,6 +3,9 @@
 
 #include "Renderer/Renderer.h"
 #include "MathLib/literals.h"
+#include "Log/Log.h"
+
+#include <chrono>
 
 static RNDR::Renderer renderer{};
 static RNDR::Scene scene{};
@@ -64,6 +67,8 @@ void stuff::init() {
 }
 
 void stuff::draw(HDC hdc) {
+	auto t1 = std::chrono::high_resolution_clock::now();
+
 	renderer.render(scene, camera);
 	auto screen = renderer.getScreen();
 	auto dimensions = renderer.getDimensions();
@@ -73,12 +78,9 @@ void stuff::draw(HDC hdc) {
 	BitBlt(hdc, 0, 0, dimensions.width, dimensions.height, src, 0, 0, SRCCOPY);
 	DeleteDC(src);
 
-	FILE* fp;
-	AllocConsole();
-	freopen_s(&fp, "CONIN$", "r", stdin);
-	freopen_s(&fp, "CONOUT$", "w", stdout);
-	freopen_s(&fp, "CONOUT$", "w", stderr);
-	printf("repaint\n");
+	auto t2 = std::chrono::high_resolution_clock::now();
+	std::chrono::duration<double, std::ratio<1>> duration = t2 - t1;
+	LOG_INFO("Render Time: %fs", duration);
 }
 
 void stuff::changeDimensions(int width, int height) {
@@ -86,4 +88,7 @@ void stuff::changeDimensions(int width, int height) {
 }
 void stuff::changeLight(int x, int y, int z) {
 	scene.addLight(RNDR::components::Light({ static_cast<double>(x), static_cast<double>(y), static_cast<double>(z) }));
+}
+void stuff::resetAll() {
+	scene.addLight(RNDR::components::Light({ 0,0,0 }));
 };

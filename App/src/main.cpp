@@ -5,6 +5,7 @@
 #include "content.h"
 
 #include "init.h"
+#include "Log/Log.h"
 
 constexpr auto IDN_MAIN_WINDOW = TEXT("MAIN");
 constexpr auto IDN_ASIDE = TEXT("ASIDE");
@@ -14,8 +15,10 @@ constexpr auto IDN_CONTENT = TEXT("CONTENT");
 #define IDC_CONTENT 0x002
 
 static HINSTANCE hInst;
+static HWND hWndMain;
 static HWND hWndAside;
 static HWND hWndContent;
+static bool isLogConsoleShown = false;
 
 ATOM RegisterWindowClass(HINSTANCE hInstance);
 BOOL InitInstance(HINSTANCE, int);
@@ -27,6 +30,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 
 	// Инициализация рендерера
 	RNDR::init();
+	LOG_HIDE();
 
 	RegisterWindowClass(hInstance);
 	RegisterAsideWindowClass(hInstance, IDN_ASIDE);
@@ -41,6 +45,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 	// Цикл основного сообщения:
 	while (GetMessage(&msg, nullptr, 0, 0)) {
 		TranslateMessage(&msg);
+		if (msg.message == WM_KEYUP && msg.hwnd != hWndMain) SendMessage(hWndMain, WM_KEYUP, msg.wParam, msg.lParam);
 		DispatchMessage(&msg);
 	}
 
@@ -71,12 +76,12 @@ ATOM RegisterWindowClass(HINSTANCE hInstance) {
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow) {
 	hInst = hInstance; // Сохранить маркер экземпляра в глобальной переменной
 
-	HWND hWnd = CreateWindowW(IDN_MAIN_WINDOW, config::IDS_APP_TITLE, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
+	hWndMain = CreateWindowW(IDN_MAIN_WINDOW, config::IDS_APP_TITLE, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
 
-	if (!hWnd) return FALSE;
+	if (!hWndMain) return FALSE;
 
-	ShowWindow(hWnd, nCmdShow);
-	UpdateWindow(hWnd);
+	ShowWindow(hWndMain, nCmdShow);
+	UpdateWindow(hWndMain);
 
 	return TRUE;
 }
@@ -113,10 +118,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 			lpMMI->ptMinTrackSize.y = config::mainMinHeight;
 		}
 		break;
+	case WM_KEYUP:
+		if (wParam == VK_OEM_3){
+			if (isLogConsoleShown) LOG_HIDE();
+			else LOG_SHOW();
+			isLogConsoleShown = !isLogConsoleShown;
+		}
+		break;
 	case WM_COMMAND:
 		break;
 	case ASIDE_REQUEST_REDRAW:
-		RedrawWindow(hWnd, NULL, NULL, RDW_UPDATENOW);
+		RedrawWindow(hWndContent, NULL, NULL, RDW_INVALIDATE|RDW_UPDATENOW);
 		break;
 	case WM_PAINT:
 		break;

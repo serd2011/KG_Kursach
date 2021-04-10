@@ -175,26 +175,9 @@ LRESULT CALLBACK AsideWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 				SendMessage(GetDlgItem(hWnd, IDC_GROUPBOX_2 + 4), XYZ_CHANGE_DATA, 0, 0);
 				SendMessage(GetDlgItem(hWnd, IDC_LIGHT), XYZ_CHANGE_DATA, 0, 0);
 
-				//// Static labels dont do messages
-				////we can set the text directly though
-				//CHOOSECOLOR cc;                 // common dialog box structure 
-				//static COLORREF acrCustClr[16]; // array of custom colors
-				//HBRUSH hbrush;                  // brush handle
-				//static DWORD rgbCurrent;        // initial color selection
+				stuff::resetAll();
 
-				//// Initialize CHOOSECOLOR 
-				//ZeroMemory(&cc, sizeof(cc));
-				//cc.lStructSize = sizeof(cc);
-				//cc.hwndOwner = hWnd;
-				//cc.lpCustColors = (LPDWORD)acrCustClr;
-				//cc.rgbResult = rgbCurrent;
-				//cc.Flags = CC_FULLOPEN | CC_RGBINIT;
-
-				//if (ChooseColor(&cc) == TRUE) {
-				//	hbrush = CreateSolidBrush(cc.rgbResult);
-				//	rgbCurrent = cc.rgbResult;
-				//}
-				//break;
+				SendMessage(GetParent(hWnd), ASIDE_REQUEST_REDRAW, 0, 0);
 			}
 		}
 		break;

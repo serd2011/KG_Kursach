@@ -196,13 +196,7 @@ LRESULT CALLBACK LabelEditWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM
 									  WS_VISIBLE | WS_CHILD | ES_CENTER | ES_MULTILINE,
 									  height, 0, (width - height), height,
 									  hWnd, (HMENU)IDC_EDIT, createParams->hInstance, nullptr);
-			EnforceSignedIntegerEdit(edit);
-			HWND upDown = CreateWindowW(UPDOWN_CLASS, nullptr,
-										WS_CHILD | UDS_SETBUDDYINT | UDS_ARROWKEYS | UDS_WRAP,
-										0, 0, 0, height,
-										hWnd, (HMENU)IDC_UPDOWN, createParams->hInstance, nullptr
-			);
-			SendMessage(upDown, UDM_SETBUDDY, (WPARAM)edit, 0);
+			EnforceSignedIntegerEdit(edit);	
 		}
 		break;
 	case WM_CTLCOLORSTATIC:
@@ -287,12 +281,12 @@ bool IsUnicodeDigit(wchar_t ch) {
 		(type & C1_DIGIT);
 }
 
-LRESULT CALLBACK SignedIntegerSubclassProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData) {
+LRESULT CALLBACK SignedIntegerEditWithUpDownProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData) {
+	static int count;
 	switch (uMsg) {
 	case WM_NCDESTROY:
-		RemoveWindowSubclass(hWnd, SignedIntegerSubclassProc, uIdSubclass);
+		RemoveWindowSubclass(hWnd, SignedIntegerEditWithUpDownProc, uIdSubclass);
 		break;
-
 	case WM_CHAR:
 		{
 			DWORD start, end;
@@ -305,10 +299,43 @@ LRESULT CALLBACK SignedIntegerSubclassProc(HWND hWnd, UINT uMsg, WPARAM wParam, 
 			MessageBeep(0);                      // otherwise invalid
 			return 0;
 		}
+	case WM_KEYDOWN:
+		{			
+			BOOL tmp;
+			short data;
+			switch (wParam) {
+			case VK_UP:				
+					data = GetDlgItemInt(GetParent(hWnd), IDC_EDIT, &tmp, TRUE);
+					SetDlgItemInt(GetParent(hWnd), IDC_EDIT, (UINT)(data + 1), TRUE);
+					count++;
+					if (count == 10) {
+						SendMessage(GetParent(hWnd), WM_COMMAND, MAKEWPARAM(0, EN_CHANGE), 0);
+						count = 0;
+					}
+				break;
+			case VK_DOWN:				
+					data = GetDlgItemInt(GetParent(hWnd), IDC_EDIT, &tmp, TRUE);
+					SetDlgItemInt(GetParent(hWnd), IDC_EDIT, (UINT)(data - 1), TRUE);
+					count++;
+					if (count == 10) {
+						SendMessage(GetParent(hWnd), WM_COMMAND, MAKEWPARAM(0, EN_CHANGE), 0);
+						count = 0;
+					}
+				break;
+			}
+			return 0;
+		}break;
+	case WM_KEYUP:
+		{
+			if (wParam == VK_UP || wParam == VK_DOWN) {
+				SendMessage(GetParent(hWnd), WM_COMMAND, MAKEWPARAM(0, EN_CHANGE), 0);
+				count = 0;
+			}
+		}
 	}
 	return DefSubclassProc(hWnd, uMsg, wParam, lParam);
 }
 
 BOOL EnforceSignedIntegerEdit(HWND hwnd) {
-	return SetWindowSubclass(hwnd, SignedIntegerSubclassProc, 0, 0);
+	return SetWindowSubclass(hwnd, SignedIntegerEditWithUpDownProc, 0, 0);
 }
