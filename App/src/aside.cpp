@@ -131,7 +131,7 @@ LRESULT CALLBACK AsideWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 									 WS_VISIBLE | WS_CHILD,
 									 gb3.sizeAndPos.getXContent(leftPos), gb3.sizeAndPos.getYContent(), gb3.sizeAndPos.getContentWidth(-leftPos), config::aside::elementHeight,
 									 hWnd, (HMENU)IDC_LIGHT, createParams->hInstance, nullptr);
-			SendMessage(tmp, UDM_SETRANGE, 0, MAKELPARAM(5000, -5000));
+			SendMessage(tmp, UDM_SETRANGE, 0, MAKELPARAM(-5000, 5000));
 			SendMessage(tmp, XYZ_SET_COLOR, (WPARAM)&xyzColorInfo, 0);
 			SendMessage(tmp, XYZ_CHANGE_DATA, 0, 0);
 
@@ -151,7 +151,7 @@ LRESULT CALLBACK AsideWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			int width = rect.right - rect.left;
 			int height = rect.bottom - rect.top;
 
-			SetWindowPos(hWndButton, nullptr, 10, (height - 10 - 40), (width - 20), 40, SWP_NOZORDER);			
+			SetWindowPos(hWndButton, nullptr, 10, (height - 10 - 40), (width - 20), 40, SWP_NOZORDER);
 		}
 		break;
 	case WM_CTLCOLORSTATIC:
@@ -206,7 +206,7 @@ LRESULT CALLBACK AsideWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			}
 			SendMessage(GetParent(hWnd), ASIDE_REQUEST_REDRAW, 0, 0);
 		}
-		break;	
+		break;
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		break;
@@ -253,7 +253,7 @@ void createFigureGroupBox(LPWSTR title, SizeAndPos& size, HWND parent, HINSTANCE
 						WS_VISIBLE | WS_CHILD,
 						gb.sizeAndPos.getXContent(leftPos), y, gb.sizeAndPos.getContentWidth(-leftPos), config::aside::elementHeight,
 						parent, (HMENU)((size_t)boxNum + 2), hInstance, nullptr);
-	SendMessage(tmp, UDM_SETRANGE, 0, MAKELPARAM(5000, -5000));
+	SendMessage(tmp, UDM_SETRANGE, 0, MAKELPARAM(-5000, 5000));
 	SendMessage(tmp, XYZ_SET_COLOR, (WPARAM)&xyzColorInfo, 0);
 	SendMessage(tmp, XYZ_CHANGE_DATA, 0, 0);
 
@@ -267,7 +267,7 @@ void createFigureGroupBox(LPWSTR title, SizeAndPos& size, HWND parent, HINSTANCE
 						WS_VISIBLE | WS_CHILD,
 						gb.sizeAndPos.getXContent(leftPos), y, gb.sizeAndPos.getContentWidth(-leftPos), config::aside::elementHeight,
 						parent, (HMENU)((size_t)boxNum + 3), hInstance, nullptr);
-	SendMessage(tmp, UDM_SETRANGE, 0, MAKELPARAM(360, -360));
+	SendMessage(tmp, UDM_SETRANGE, 0, MAKELPARAM(-360, 360));
 	SendMessage(tmp, XYZ_SET_COLOR, (WPARAM)&xyzColorInfo, 0);
 	SendMessage(tmp, XYZ_CHANGE_DATA, 0, 0);
 
@@ -280,7 +280,7 @@ void createFigureGroupBox(LPWSTR title, SizeAndPos& size, HWND parent, HINSTANCE
 						WS_VISIBLE | WS_CHILD,
 						gb.sizeAndPos.getXContent(leftPos), y, gb.sizeAndPos.getContentWidth(-leftPos), config::aside::elementHeight,
 						parent, (HMENU)((size_t)boxNum + 4), hInstance, nullptr);
-	SendMessage(tmp, UDM_SETRANGE, 0, MAKELPARAM(500, 10));
+	SendMessage(tmp, UDM_SETRANGE, 0, MAKELPARAM(10, 500));
 	SendMessage(tmp, XYZ_SET_COLOR, (WPARAM)&xyzColorInfo, 0);
 	SendMessage(tmp, XYZ_CHANGE_DATA, 0, 0);
 }

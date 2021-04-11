@@ -142,7 +142,6 @@ LRESULT CALLBACK xyzControlWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARA
 
 #define IDC_LABEL	 0x101
 #define IDC_EDIT	 0x102
-#define IDC_UPDOWN	 0x103
 
 struct ColorData {
 	COLORREF background;
@@ -171,7 +170,12 @@ struct ColorDataMultiple {
 	ColorData editData;
 };
 
-BOOL EnforceSignedIntegerEdit(HWND hwnd);
+struct EditRangeData {
+	short max = 0;
+	short min = 0;
+};
+
+LRESULT CALLBACK EditSubClassProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData);
 
 LRESULT CALLBACK LabelEditWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
 	switch (message) {
@@ -196,7 +200,8 @@ LRESULT CALLBACK LabelEditWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM
 									  WS_VISIBLE | WS_CHILD | ES_CENTER | ES_MULTILINE,
 									  height, 0, (width - height), height,
 									  hWnd, (HMENU)IDC_EDIT, createParams->hInstance, nullptr);
-			EnforceSignedIntegerEdit(edit);	
+			EditRangeData* data = new EditRangeData();
+			SetWindowSubclass(edit, EditSubClassProc, 0, (DWORD_PTR)data);
 		}
 		break;
 	case WM_CTLCOLORSTATIC:
@@ -245,7 +250,7 @@ LRESULT CALLBACK LabelEditWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM
 		}
 		break;
 	case UDM_SETRANGE:
-		SendMessage(GetDlgItem(hWnd, IDC_UPDOWN), UDM_SETRANGE, 0, lParam);
+		SendMessage(GetDlgItem(hWnd, IDC_EDIT), UDM_SETRANGE, 0, lParam);
 		break;
 	case XYZ_SET_COLOR:
 		{
@@ -281,11 +286,12 @@ bool IsUnicodeDigit(wchar_t ch) {
 		(type & C1_DIGIT);
 }
 
-LRESULT CALLBACK SignedIntegerEditWithUpDownProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData) {
+LRESULT CALLBACK EditSubClassProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData) {
 	static int count;
 	switch (uMsg) {
 	case WM_NCDESTROY:
-		RemoveWindowSubclass(hWnd, SignedIntegerEditWithUpDownProc, uIdSubclass);
+		delete (EditRangeData*)dwRefData;
+		RemoveWindowSubclass(hWnd, EditSubClassProc, uIdSubclass);
 		break;
 	case WM_CHAR:
 		{
@@ -300,31 +306,37 @@ LRESULT CALLBACK SignedIntegerEditWithUpDownProc(HWND hWnd, UINT uMsg, WPARAM wP
 			return 0;
 		}
 	case WM_KEYDOWN:
-		{			
+		{
 			BOOL tmp;
 			short data;
 			switch (wParam) {
-			case VK_UP:				
-					data = GetDlgItemInt(GetParent(hWnd), IDC_EDIT, &tmp, TRUE);
-					SetDlgItemInt(GetParent(hWnd), IDC_EDIT, (UINT)(data + 1), TRUE);
-					count++;
-					if (count == 10) {
-						SendMessage(GetParent(hWnd), WM_COMMAND, MAKEWPARAM(0, EN_CHANGE), 0);
-						count = 0;
-					}
+			case VK_UP:
+				data = GetDlgItemInt(GetParent(hWnd), IDC_EDIT, &tmp, TRUE);
+				if (data < ((EditRangeData*)dwRefData)->max) SetDlgItemInt(GetParent(hWnd), IDC_EDIT, (UINT)(data + 1), TRUE);
+				count++;
+				if (count == 10) {
+					SendMessage(GetParent(hWnd), WM_COMMAND, MAKEWPARAM(0, EN_CHANGE), 0);
+					count = 0;
+				}
 				break;
-			case VK_DOWN:				
-					data = GetDlgItemInt(GetParent(hWnd), IDC_EDIT, &tmp, TRUE);
-					SetDlgItemInt(GetParent(hWnd), IDC_EDIT, (UINT)(data - 1), TRUE);
-					count++;
-					if (count == 10) {
-						SendMessage(GetParent(hWnd), WM_COMMAND, MAKEWPARAM(0, EN_CHANGE), 0);
-						count = 0;
-					}
+			case VK_DOWN:
+				data = GetDlgItemInt(GetParent(hWnd), IDC_EDIT, &tmp, TRUE);
+				if (data > ((EditRangeData*)dwRefData)->min) SetDlgItemInt(GetParent(hWnd), IDC_EDIT, (UINT)(data - 1), TRUE);
+				count++;
+				if (count == 10) {
+					SendMessage(GetParent(hWnd), WM_COMMAND, MAKEWPARAM(0, EN_CHANGE), 0);
+					count = 0;
+				}
 				break;
 			}
 			return 0;
-		}break;
+		}
+	case UDM_SETRANGE:
+		{
+			((EditRangeData*)dwRefData)->min = LOWORD(lParam);
+			((EditRangeData*)dwRefData)->max = HIWORD(lParam);
+			return 0;
+		}
 	case WM_KEYUP:
 		{
 			if (wParam == VK_UP || wParam == VK_DOWN) {
@@ -332,10 +344,7 @@ LRESULT CALLBACK SignedIntegerEditWithUpDownProc(HWND hWnd, UINT uMsg, WPARAM wP
 				count = 0;
 			}
 		}
+		break;
 	}
 	return DefSubclassProc(hWnd, uMsg, wParam, lParam);
-}
-
-BOOL EnforceSignedIntegerEdit(HWND hwnd) {
-	return SetWindowSubclass(hwnd, SignedIntegerEditWithUpDownProc, 0, 0);
 }
