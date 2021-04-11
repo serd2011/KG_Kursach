@@ -45,4 +45,34 @@ namespace config {
 		constexpr COLORREF background = 0x1E1E1E;
 	#endif
 	}
+
+	namespace transforms {
+		namespace figure1 {
+			constexpr int positionX = 500;
+			constexpr int positionY = 500;
+			constexpr int positionZ = 0;
+			constexpr int rotationX = 100;
+			constexpr int rotationY = 0;
+			constexpr int rotationZ = 70;
+			constexpr int scaleX = 200;
+			constexpr int scaleY = 200;
+			constexpr int scaleZ = 200;
+		}
+		namespace figure2 {
+			constexpr int positionX = 550;
+			constexpr int positionY = 470;
+			constexpr int positionZ = 60;
+			constexpr int rotationX = -40;
+			constexpr int rotationY = 170;
+			constexpr int rotationZ = 0;
+			constexpr int scaleX = 280;
+			constexpr int scaleY = 210;
+			constexpr int scaleZ = 210;
+		}
+		namespace light {
+			constexpr int positionX = 1000;
+			constexpr int positionY = 500;
+			constexpr int positionZ = 300;
+		}
+	}
 }

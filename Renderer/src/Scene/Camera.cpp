@@ -4,7 +4,7 @@ RNDR::Camera::Camera() {}
 
 RNDR::Camera::~Camera() {}
 
-ML::mat4<double>& RNDR::Camera::getProjectionMetrix() {
+const ML::mat4<double>& RNDR::Camera::getProjectionMetrix() const{
 	return this->matrix;
 }
 

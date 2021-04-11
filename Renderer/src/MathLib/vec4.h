@@ -35,6 +35,13 @@ namespace ML {
 			T p2 = T(),
 			T p3 = 1
 		);
+		template<typename U>
+		vec4(
+			U p0 = U(),
+			U p1 = U(),
+			U p2 = U(),
+			U p3 = 1
+		);
 		~vec4() {};
 
 		vec4(const vec4&);
@@ -86,6 +93,15 @@ inline ML::vec4<T>::vec4(const vec4<T>& in) {
 	data[1] = in.data[1];
 	data[2] = in.data[2];
 	data[3] = in.data[3];
+}
+
+template<typename T>
+template<typename U>
+inline ML::vec4<T>::vec4(U p0, U p1, U p2, U p3) {
+	data[0] = static_cast<T>(p0);
+	data[1] = static_cast<T>(p1);
+	data[2] = static_cast<T>(p2);
+	data[3] = static_cast<T>(p3);
 }
 
 template<typename T>

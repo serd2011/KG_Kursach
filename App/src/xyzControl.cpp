@@ -97,9 +97,9 @@ LRESULT CALLBACK xyzControlWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARA
 	case XYZ_CHANGE_DATA:
 		{
 			Data* data = (Data*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
-			data->x = HIWORD(wParam);
-			data->y = LOWORD(wParam);
-			data->z = LOWORD(lParam);
+			data->x = (int)(signed short)LOWORD(wParam);
+			data->y = (int)(signed short)HIWORD(wParam);
+			data->z = (int)(signed short)LOWORD(lParam);
 			SendMessage(GetDlgItem(hWnd, IDC_X), XYZ_CHANGE_DATA, (WPARAM)data->x, 0);
 			SendMessage(GetDlgItem(hWnd, IDC_Y), XYZ_CHANGE_DATA, (WPARAM)data->y, 0);
 			SendMessage(GetDlgItem(hWnd, IDC_Z), XYZ_CHANGE_DATA, (WPARAM)data->z, 0);
@@ -312,18 +312,20 @@ LRESULT CALLBACK EditSubClassProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
 			switch (wParam) {
 			case VK_UP:
 				data = GetDlgItemInt(GetParent(hWnd), IDC_EDIT, &tmp, TRUE);
-				if (data < ((EditRangeData*)dwRefData)->max) SetDlgItemInt(GetParent(hWnd), IDC_EDIT, (UINT)(data + 1), TRUE);
+				if (data == ((EditRangeData*)dwRefData)->max) data = ((EditRangeData*)dwRefData)->min;
+					SetDlgItemInt(GetParent(hWnd), IDC_EDIT, (UINT)(data + 1), TRUE);
 				count++;
-				if (count == 10) {
+				if (count == 5) {
 					SendMessage(GetParent(hWnd), WM_COMMAND, MAKEWPARAM(0, EN_CHANGE), 0);
 					count = 0;
 				}
 				break;
 			case VK_DOWN:
 				data = GetDlgItemInt(GetParent(hWnd), IDC_EDIT, &tmp, TRUE);
-				if (data > ((EditRangeData*)dwRefData)->min) SetDlgItemInt(GetParent(hWnd), IDC_EDIT, (UINT)(data - 1), TRUE);
+				if (data == ((EditRangeData*)dwRefData)->min) data = ((EditRangeData*)dwRefData)->max;
+					SetDlgItemInt(GetParent(hWnd), IDC_EDIT, (UINT)(data - 1), TRUE);
 				count++;
-				if (count == 10) {
+				if (count == 5) {
 					SendMessage(GetParent(hWnd), WM_COMMAND, MAKEWPARAM(0, EN_CHANGE), 0);
 					count = 0;
 				}

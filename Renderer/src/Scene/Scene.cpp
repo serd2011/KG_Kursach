@@ -15,8 +15,12 @@ void Scene::removeMesh(size_t index) {
 	this->transforms.erase(this->transforms.begin() + index);
 }
 
-void Scene::changeTransform(size_t index, const components::Transform& transform) {
+void Scene::setTransform(size_t index, const components::Transform& transform) {
 	this->transforms[index] = transform;
+}
+
+components::Transform& RNDR::Scene::getTransform(size_t index) {
+	return this->transforms[index];
 }
 
 void Scene::addLight(const components::Light& light) {

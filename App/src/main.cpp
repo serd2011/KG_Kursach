@@ -4,6 +4,8 @@
 #include "aside.h"
 #include "content.h"
 
+#include "stuff.h"
+
 #include "init.h"
 #include "Log/Log.h"
 
@@ -31,6 +33,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 	// Инициализация рендерера
 	RNDR::init();
 	LOG_HIDE();
+	stuff::init();
 
 	RegisterWindowClass(hInstance);
 	RegisterAsideWindowClass(hInstance, IDN_ASIDE);
@@ -97,6 +100,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 		break;
 	case WM_SIZE:
 		{
+			if (wParam == SIZE_MINIMIZED) {
+				LOG_HIDE();
+				break;
+			}
+			if (isLogConsoleShown) LOG_SHOW();
+
 			RECT mainRect;
 			GetClientRect(hWnd, &mainRect);
 			int mainWidth = mainRect.right - mainRect.left;

@@ -2,7 +2,7 @@ workspace "Kursach"
 
     configurations { "Debug", "Release" }
     
-    platforms { "x86", "x86_64" }
+    platforms { "x86_64" }
 
     startproject "App"
 

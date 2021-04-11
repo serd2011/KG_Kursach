@@ -14,6 +14,10 @@ namespace RNDR {
 			return (double)(angle * PI / 180);
 		}
 
+		inline double toRad(long double angle) {
+			return angle * PI / 180;
+		}
+
 	}
 
 }

@@ -21,7 +21,9 @@ namespace RNDR {
 
 		size_t addMesh(const components::Mesh&, const components::Transform& transform = components::Transform());
 		void removeMesh(size_t index);
-		void changeTransform(size_t index, const components::Transform& transform);
+
+		void setTransform(size_t index, const components::Transform& transform);
+		components::Transform& getTransform(size_t index);
 
 		void addLight(const components::Light&);
 

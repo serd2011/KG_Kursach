@@ -31,6 +31,7 @@ void LOG::init() {
 	freopen_s(&fp, "CONOUT$", "w", stdout);
 	freopen_s(&fp, "CONOUT$", "w", stderr);
 	setvbuf(stdout, NULL, _IONBF, 0);
+	LOG_SUCCESS("Log Initialized");
 }
 
 void LOG::hide() {
@@ -39,6 +40,7 @@ void LOG::hide() {
 
 void LOG::show() {
 	ShowWindow(hWnd, SW_SHOWNOACTIVATE);
+	SetWindowPos(hWnd, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
 }
 
 void LOG::info(char* format, ...) {
@@ -49,6 +51,29 @@ void LOG::info(char* format, ...) {
 	vprintf(format, argptr);
 	va_end(argptr);
 	printf("\n");
+	SetConsoleTextAttribute(hConsole, 0 | 0xf);
+}
+
+void LOG::error(char* format, ...) {
+	SetConsoleTextAttribute(hConsole, 0 | FOREGROUND_RED);
+	printf("[%s] ", getTimeStr().c_str());
+	va_list argptr;
+	va_start(argptr, format);
+	vprintf(format, argptr);
+	va_end(argptr);
+	printf("\n");
+	SetConsoleTextAttribute(hConsole, 0 | 0xf);
+}
+
+void LOG::success(char* format, ...) {
+	SetConsoleTextAttribute(hConsole, 0 | FOREGROUND_GREEN);
+	printf("[%s] ", getTimeStr().c_str());
+	va_list argptr;
+	va_start(argptr, format);
+	vprintf(format, argptr);
+	va_end(argptr);
+	printf("\n");
+	SetConsoleTextAttribute(hConsole, 0 | 0xf);
 }
 
 std::string getTimeStr() {

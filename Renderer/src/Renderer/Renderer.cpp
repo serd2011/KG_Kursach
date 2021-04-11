@@ -38,6 +38,7 @@ void RNDR::Renderer::render(const Scene& scene, const Camera& camera) {
 	std::fill(this->zBuffer, this->zBuffer + pixelCount, std::numeric_limits<int>::min());
 	std::fill(this->screen, this->screen + pixelCount, 0xE1E1E1);
 
+	auto cameraProjectionMetrix = camera.getProjectionMetrix();
 	auto transfrom = scene.transforms.begin();
 	for (auto mesh = scene.meshes.begin(); mesh != scene.meshes.end(); mesh++, transfrom++) {
 		size_t index = 0;

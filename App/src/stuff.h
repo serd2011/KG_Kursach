@@ -8,6 +8,14 @@ namespace stuff{
 	void changeDimensions(int width, int height);
 	void changeLight(int, int, int);
 
+	enum class TransfromType : int {
+		Translation,
+		Rotation,
+		Scale
+	};
+
+	void changeFigure(int num, TransfromType, int, int, int);
+
 	void resetAll();
 
 }

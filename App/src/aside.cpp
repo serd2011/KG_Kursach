@@ -87,15 +87,6 @@ struct GroupBox {
 	}
 };
 
-
-// ====
-static LPCTSTR types[] = {
-	L"Параллелепипед",
-	L"Треугольная пирамида"
-};
-// ====
-
-
 #define IDC_GROUPBOX_1		0x100
 #define IDC_GROUPBOX_2		0x110
 #define IDC_LIGHT			0x120
@@ -142,6 +133,7 @@ LRESULT CALLBACK AsideWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 									   hWnd, (HMENU)IDC_BUTTON_RESET, createParams->hInstance, nullptr);
 
 			EnumChildWindows(hWnd, SetChildFont, (LPARAM)hFont);
+			SendMessage(hWnd, WM_COMMAND, IDC_BUTTON_RESET, 0);
 		}
 		break;
 	case WM_SIZE:
@@ -167,13 +159,13 @@ LRESULT CALLBACK AsideWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 		switch (wParam) {
 		case IDC_BUTTON_RESET:
 			{
-				SendMessage(GetDlgItem(hWnd, IDC_GROUPBOX_1 + 2), XYZ_CHANGE_DATA, 0, 0);
-				SendMessage(GetDlgItem(hWnd, IDC_GROUPBOX_1 + 3), XYZ_CHANGE_DATA, 0, 0);
-				SendMessage(GetDlgItem(hWnd, IDC_GROUPBOX_1 + 4), XYZ_CHANGE_DATA, 0, 0);
-				SendMessage(GetDlgItem(hWnd, IDC_GROUPBOX_2 + 2), XYZ_CHANGE_DATA, 0, 0);
-				SendMessage(GetDlgItem(hWnd, IDC_GROUPBOX_2 + 3), XYZ_CHANGE_DATA, 0, 0);
-				SendMessage(GetDlgItem(hWnd, IDC_GROUPBOX_2 + 4), XYZ_CHANGE_DATA, 0, 0);
-				SendMessage(GetDlgItem(hWnd, IDC_LIGHT), XYZ_CHANGE_DATA, 0, 0);
+				SendMessage(GetDlgItem(hWnd, IDC_GROUPBOX_1 + 2), XYZ_CHANGE_DATA, MAKEWPARAM(config::transforms::figure1::positionX, config::transforms::figure1::positionY), MAKELPARAM(config::transforms::figure1::positionZ, 0));
+				SendMessage(GetDlgItem(hWnd, IDC_GROUPBOX_1 + 3), XYZ_CHANGE_DATA, MAKEWPARAM(config::transforms::figure1::rotationX, config::transforms::figure1::rotationY), MAKELPARAM(config::transforms::figure1::rotationZ, 0));
+				SendMessage(GetDlgItem(hWnd, IDC_GROUPBOX_1 + 4), XYZ_CHANGE_DATA, MAKEWPARAM(config::transforms::figure1::scaleX, config::transforms::figure1::scaleY), MAKELPARAM(config::transforms::figure1::scaleZ, 0));
+				SendMessage(GetDlgItem(hWnd, IDC_GROUPBOX_2 + 2), XYZ_CHANGE_DATA, MAKEWPARAM(config::transforms::figure2::positionX, config::transforms::figure2::positionY), MAKELPARAM(config::transforms::figure2::positionZ, 0));
+				SendMessage(GetDlgItem(hWnd, IDC_GROUPBOX_2 + 3), XYZ_CHANGE_DATA, MAKEWPARAM(config::transforms::figure2::rotationX, config::transforms::figure2::rotationY), MAKELPARAM(config::transforms::figure2::rotationZ, 0));
+				SendMessage(GetDlgItem(hWnd, IDC_GROUPBOX_2 + 4), XYZ_CHANGE_DATA, MAKEWPARAM(config::transforms::figure2::scaleX, config::transforms::figure2::scaleY), MAKELPARAM(config::transforms::figure2::scaleZ, 0));
+				SendMessage(GetDlgItem(hWnd, IDC_LIGHT), XYZ_CHANGE_DATA, MAKEWPARAM(config::transforms::light::positionX, config::transforms::light::positionY), MAKELPARAM(config::transforms::light::positionZ, 0));
 
 				stuff::resetAll();
 
@@ -188,19 +180,18 @@ LRESULT CALLBACK AsideWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			int fugireNum = (idc >> 4) & 0xF;
 			if (fugireNum > 2) break;
 			if (fugireNum == 2) {
-				// Обновить положение света
 				stuff::changeLight(data->x, data->y, data->z);
 			} else {
 				int xyzNum = idc & 0xF;
 				switch (xyzNum) {
 				case 2:
-					// Обновить положение
+					stuff::changeFigure(fugireNum, stuff::TransfromType::Translation, data->x, data->y, data->z);
 					break;
 				case 3:
-					// Обновить поворот
+					stuff::changeFigure(fugireNum, stuff::TransfromType::Rotation, data->x, data->y, data->z);
 					break;
 				case 4:
-					// Обновить масштаб
+					stuff::changeFigure(fugireNum, stuff::TransfromType::Scale, data->x, data->y, data->z);
 					break;
 				}
 			}
@@ -223,28 +214,12 @@ BOOL CALLBACK SetChildFont(HWND hwnd, LPARAM lParam) {
 }
 
 void createFigureGroupBox(LPWSTR title, SizeAndPos& size, HWND parent, HINSTANCE hInstance, int boxNum) {
-	size.height = size.padding.top + (config::aside::elementHeight + 2) * 3 + 5 + config::aside::elementHeight + size.padding.bottom;
+	size.height = size.padding.top + (config::aside::elementHeight + 2) * 3 + size.padding.bottom;
 
 	GroupBox gb(title, size, parent, nullptr, hInstance);
-	// Список
-	CreateWindowW(WC_STATIC, TEXT("Тип:"),
-				  WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON | SS_CENTERIMAGE,
-				  gb.sizeAndPos.getXContent(), gb.sizeAndPos.getYContent(), leftPos, config::aside::elementHeight,
-				  parent, nullptr, hInstance, nullptr);
-	HWND hWndComboBox = CreateWindow(WC_COMBOBOX, TEXT(""),
-									 CBS_DROPDOWNLIST | CBS_HASSTRINGS | WS_CHILD | WS_OVERLAPPED | WS_VISIBLE | SS_CENTERIMAGE,
-									 gb.sizeAndPos.getXContent(leftPos), gb.sizeAndPos.getYContent(), gb.sizeAndPos.getContentWidth(-leftPos), config::aside::elementHeight,
-									 parent, (HMENU)((size_t)boxNum + 1), hInstance, nullptr);
-
-	// ====
-	for (int i = 0; i < 2; i++) {
-		SendMessage(hWndComboBox, (UINT)CB_ADDSTRING, (WPARAM)0, (LPARAM)(types[i]));
-	}
-	SendMessage(hWndComboBox, CB_SETCURSEL, (WPARAM)0, (LPARAM)0);
-	// ====
 
 	HWND tmp;
-	int y = gb.sizeAndPos.getYContent(config::aside::elementHeight + 2 + 5);
+	int y = gb.sizeAndPos.getYContent();
 	CreateWindowW(WC_STATIC, TEXT("Положение:"),
 				  WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON | SS_CENTERIMAGE,
 				  gb.sizeAndPos.getXContent(), y, leftPos, config::aside::elementHeight,
@@ -258,7 +233,7 @@ void createFigureGroupBox(LPWSTR title, SizeAndPos& size, HWND parent, HINSTANCE
 	SendMessage(tmp, XYZ_CHANGE_DATA, 0, 0);
 
 
-	y = gb.sizeAndPos.getYContent((config::aside::elementHeight + 2) * 2 + 5);
+	y = gb.sizeAndPos.getYContent((config::aside::elementHeight + 2) * 1 );
 	CreateWindowW(WC_STATIC, TEXT("Поворот:"),
 				  WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON | SS_CENTERIMAGE,
 				  gb.sizeAndPos.getXContent(), y, leftPos, config::aside::elementHeight,
@@ -271,7 +246,7 @@ void createFigureGroupBox(LPWSTR title, SizeAndPos& size, HWND parent, HINSTANCE
 	SendMessage(tmp, XYZ_SET_COLOR, (WPARAM)&xyzColorInfo, 0);
 	SendMessage(tmp, XYZ_CHANGE_DATA, 0, 0);
 
-	y = gb.sizeAndPos.getYContent((config::aside::elementHeight + 2) * 3 + 5);
+	y = gb.sizeAndPos.getYContent((config::aside::elementHeight + 2) * 2 );
 	CreateWindowW(WC_STATIC, TEXT("Масштаб:"),
 				  WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON | SS_CENTERIMAGE,
 				  gb.sizeAndPos.getXContent(), y, leftPos, config::aside::elementHeight,

@@ -26,9 +26,6 @@ ATOM RegisterContentWindowClass(HINSTANCE hInstance, LPCWSTR name) {
 
 LRESULT CALLBACK contentWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
 	switch (message) {
-	case WM_CREATE:
-		stuff::init();
-		break;
 	case WM_SIZE:
 		{
 			RECT rect;
