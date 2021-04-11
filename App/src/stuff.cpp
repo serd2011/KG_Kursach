@@ -95,8 +95,7 @@ void stuff::changeFigure(int num, TransfromType type, int x, int y, int z) {
 		LOG_ERROR("Unsupported Transfrom Type: %d", type);
 		return;
 	}
-	LOG_INFO("Transform figure %d: changed %d to {%d, %d, %d}", num, type, x, y, x);
-	//scene.setTransform(num, transform);
+	LOG_INFO("Transform figure %d: changed %d to {%d, %d, %d}", num, type, x, y, z);	
 }
 
 void stuff::resetAll() {

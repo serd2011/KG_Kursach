@@ -111,13 +111,13 @@ LRESULT CALLBACK xyzControlWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARA
 			auto idc = GetDlgCtrlID((HWND)lParam);
 			switch (idc) {
 			case IDC_X:
-				data->x = LOWORD(wParam);
+				data->x = (int)(signed short)LOWORD(wParam);
 				break;
 			case IDC_Y:
-				data->y = LOWORD(wParam);
+				data->y = (int)(signed short)LOWORD(wParam);
 				break;
 			case IDC_Z:
-				data->z = LOWORD(wParam);
+				data->z = (int)(signed short)LOWORD(wParam);
 				break;
 			default:
 				return 0;
@@ -202,6 +202,8 @@ LRESULT CALLBACK LabelEditWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM
 									  hWnd, (HMENU)IDC_EDIT, createParams->hInstance, nullptr);
 			EditRangeData* data = new EditRangeData();
 			SetWindowSubclass(edit, EditSubClassProc, 0, (DWORD_PTR)data);
+
+
 		}
 		break;
 	case WM_CTLCOLORSTATIC:
@@ -313,9 +315,9 @@ LRESULT CALLBACK EditSubClassProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
 			case VK_UP:
 				data = GetDlgItemInt(GetParent(hWnd), IDC_EDIT, &tmp, TRUE);
 				if (data == ((EditRangeData*)dwRefData)->max) data = ((EditRangeData*)dwRefData)->min;
-					SetDlgItemInt(GetParent(hWnd), IDC_EDIT, (UINT)(data + 1), TRUE);
+				SetDlgItemInt(GetParent(hWnd), IDC_EDIT, (UINT)(data + 1), TRUE);
 				count++;
-				if (count == 5) {
+				if (count == 2) {
 					SendMessage(GetParent(hWnd), WM_COMMAND, MAKEWPARAM(0, EN_CHANGE), 0);
 					count = 0;
 				}
@@ -323,9 +325,9 @@ LRESULT CALLBACK EditSubClassProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
 			case VK_DOWN:
 				data = GetDlgItemInt(GetParent(hWnd), IDC_EDIT, &tmp, TRUE);
 				if (data == ((EditRangeData*)dwRefData)->min) data = ((EditRangeData*)dwRefData)->max;
-					SetDlgItemInt(GetParent(hWnd), IDC_EDIT, (UINT)(data - 1), TRUE);
+				SetDlgItemInt(GetParent(hWnd), IDC_EDIT, (UINT)(data - 1), TRUE);
 				count++;
-				if (count == 5) {
+				if (count == 2) {
 					SendMessage(GetParent(hWnd), WM_COMMAND, MAKEWPARAM(0, EN_CHANGE), 0);
 					count = 0;
 				}
@@ -340,11 +342,30 @@ LRESULT CALLBACK EditSubClassProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
 			return 0;
 		}
 	case WM_KEYUP:
-		{
+		{			
 			if (wParam == VK_UP || wParam == VK_DOWN) {
 				SendMessage(GetParent(hWnd), WM_COMMAND, MAKEWPARAM(0, EN_CHANGE), 0);
 				count = 0;
 			}
+		}
+		break;
+	case WM_PAINT:
+		{
+			HDC hdc;
+			RECT rect;
+			HFONT hFont;
+			RECT dimensions;
+			TEXTMETRIC	textMetric;
+
+			hdc = GetDC(hWnd);
+			GetClientRect(hWnd, &dimensions);
+			int height = dimensions.bottom - dimensions.top;
+			hFont = (HFONT)SendMessage(hWnd, WM_GETFONT, 0, 0);
+			SelectFont(hdc, hFont);
+			GetTextMetrics(hdc, &textMetric);
+			rect = { 0, (height - textMetric.tmHeight) / 2, (dimensions.right - dimensions.left), height - (height - textMetric.tmHeight) / 2 };
+			SendMessage(hWnd, EM_SETRECT, 0, (LPARAM)&rect);
+			ReleaseDC(hWnd, hdc);
 		}
 		break;
 	}
