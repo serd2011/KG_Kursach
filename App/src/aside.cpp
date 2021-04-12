@@ -7,7 +7,9 @@
 
 static HWND hWndButton;
 
-static const HFONT hFont = (HFONT)GetStockObject(DEFAULT_GUI_FONT);
+static HFONT hFontNormal;
+static HFONT hFontSmall;
+
 struct asideData {
 	HBRUSH backgroungBrush;
 	~asideData() {
@@ -30,6 +32,18 @@ LRESULT CALLBACK AsideWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 BOOL CALLBACK SetChildFont(HWND hwnd, LPARAM lParam);
 
 ATOM RegisterAsideWindowClass(HINSTANCE hInstance, LPCWSTR name) {
+	
+	{
+		HFONT hFontTmp = (HFONT)GetStockObject(DEFAULT_GUI_FONT);
+		LOGFONT fontData;
+		GetObject(hFontTmp, sizeof(LOGFONT), &fontData);
+		fontData.lfHeight = -config::aside::fontSize::small;
+		hFontSmall = CreateFontIndirect(&fontData);
+		fontData.lfHeight = -config::aside::fontSize::normal;
+		hFontNormal = CreateFontIndirect(&fontData);
+		DeleteObject(hFontTmp);
+	}
+
 	RegisterXYZControlWindowClass(hInstance);
 
 	WNDCLASSEXW wcexAside;
@@ -92,23 +106,32 @@ struct GroupBox {
 #define IDC_LIGHT			0x120
 #define IDC_BUTTON_RESET	0x200
 
-int leftPos = 100;
-
-void createFigureGroupBox(LPWSTR title, SizeAndPos& size, HWND parent, HINSTANCE hInstance, int num);
+GroupBox createFigureGroupBox(LPWSTR title, SizeAndPos& size, int leftPos, HWND parent, HINSTANCE hInstance, int num);
 
 LRESULT CALLBACK AsideWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
 	switch (message) {
 	case WM_CREATE:
 		{
 			LPCREATESTRUCT createParams = (LPCREATESTRUCT)lParam;
+			int leftPos;
+			{
+				HDC hdc;
+				SIZE size;
+
+				hdc = GetDC(hWnd);				
+				SelectFont(hdc, hFontNormal);
+				GetTextExtentPoint32(hdc, TEXT("Положение:"), 10, &size);
+				ReleaseDC(hWnd, hdc);
+				leftPos = size.cx + 20;
+			}
 
 			// Фигура 1
-			SizeAndPos size{ 10,10,(createParams->cx - 20),0 ,{17,10,12,10} };
-			createFigureGroupBox(TEXT("Фигура 1"), size, hWnd, createParams->hInstance, IDC_GROUPBOX_1);
+			SizeAndPos size{ 10,10,(createParams->cx - 20),0 ,{20,10,12,10} };
+			GroupBox gb1 = createFigureGroupBox(TEXT("Фигура 1"), size, leftPos, hWnd, createParams->hInstance, IDC_GROUPBOX_1);
 			// Фигура 2
 			SizeAndPos size2 = size;
 			size2.y = size.y + size.height + 20;
-			createFigureGroupBox(TEXT("Фигура 2"), size2, hWnd, createParams->hInstance, IDC_GROUPBOX_2);
+			GroupBox gb2 = createFigureGroupBox(TEXT("Фигура 2"), size2, leftPos, hWnd, createParams->hInstance, IDC_GROUPBOX_2);
 			// Свет
 			SizeAndPos size3 = size2;
 			size3.y = size2.y + size2.height + 20;
@@ -132,7 +155,11 @@ LRESULT CALLBACK AsideWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 									   0, 0, (createParams->cx - 20), 30,
 									   hWnd, (HMENU)IDC_BUTTON_RESET, createParams->hInstance, nullptr);
 
-			EnumChildWindows(hWnd, SetChildFont, (LPARAM)hFont);
+			EnumChildWindows(hWnd, SetChildFont, (LPARAM)hFontNormal);
+			SendMessage(gb1.hWnd, WM_SETFONT, (WPARAM)hFontSmall, MAKELONG(TRUE, 0));
+			SendMessage(gb2.hWnd, WM_SETFONT, (WPARAM)hFontSmall, MAKELONG(TRUE, 0));
+			SendMessage(gb3.hWnd, WM_SETFONT, (WPARAM)hFontSmall, MAKELONG(TRUE, 0));
+
 			SendMessage(hWnd, WM_COMMAND, IDC_BUTTON_RESET, 0);
 		}
 		break;
@@ -213,7 +240,7 @@ BOOL CALLBACK SetChildFont(HWND hwnd, LPARAM lParam) {
 	return TRUE;
 }
 
-void createFigureGroupBox(LPWSTR title, SizeAndPos& size, HWND parent, HINSTANCE hInstance, int boxNum) {
+GroupBox createFigureGroupBox(LPWSTR title, SizeAndPos& size, int leftPos, HWND parent, HINSTANCE hInstance, int boxNum) {
 	size.height = size.padding.top + (config::aside::elementHeight + 2) * 3 + size.padding.bottom;
 
 	GroupBox gb(title, size, parent, nullptr, hInstance);
@@ -258,4 +285,6 @@ void createFigureGroupBox(LPWSTR title, SizeAndPos& size, HWND parent, HINSTANCE
 	SendMessage(tmp, UDM_SETRANGE, 0, MAKELPARAM(10, 500));
 	SendMessage(tmp, XYZ_SET_COLOR, (WPARAM)&xyzColorInfo, 0);
 	SendMessage(tmp, XYZ_CHANGE_DATA, 0, 0);
+
+	return gb;
 }

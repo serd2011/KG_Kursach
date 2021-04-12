@@ -11,6 +11,11 @@ namespace config {
 
 	namespace aside {
 		constexpr int elementHeight = 25;
+		
+		namespace fontSize {
+			constexpr int small = 12;
+			constexpr int normal = 14;
+		}
 
 		//colors
 	#ifndef APP_DARK_THEME
