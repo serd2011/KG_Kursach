@@ -16,7 +16,11 @@ static RNDR::Camera camera{};
 using namespace RNDR::Literals;
 
 void stuff::init() {
-	//scene.addMesh(RNDR::components::Mesh({ {-50,-50,-50},{0,50,0},{50,-50,50} }, { {0,1,2} }, 0x000FF00FF), RNDR::components::Transform{ {300,300,100} });
+	/*scene.addMesh(RNDR::components::Mesh({ 
+											{-1, 1, 0},
+											{ 1, -1, 0},
+											{ 1, 1, 0}
+										 }, { {0,1,2} }, 0x000FF00FF), RNDR::components::Transform{ {300,300,300} });*/
 	scene.addMesh(RNDR::components::Mesh({
 											 {-1,-1, 1},
 											 { 1,-1, 1},
@@ -95,7 +99,7 @@ void stuff::changeFigure(int num, TransfromType type, int x, int y, int z) {
 		LOG_ERROR("Unsupported Transfrom Type: %d", type);
 		return;
 	}
-	LOG_INFO("Transform figure %d: changed %d to {%d, %d, %d}", num, type, x, y, z);	
+	LOG_INFO("Transform figure %d: changed %d to {%d, %d, %d}", num, type, x, y, z);
 }
 
 void stuff::resetAll() {
