@@ -4,6 +4,12 @@
 namespace ML {
 
 	template<typename T>
+	class mat4;
+
+	template<typename T>
+	vec4<T> operator*(const vec4<T>&, const mat4<T>&);
+
+	template<typename T>
 	class mat4 {
 	public:
 		mat4(
@@ -29,18 +35,17 @@ namespace ML {
 		vec4<T>& operator[](size_t);
 		const vec4<T>& operator[](size_t) const;
 
+	private:
+		vec4<T> data[4];
+
+		template<typename T> friend vec4<T> operator*(const vec4<T>&, const mat4<T>&);
+
 		template<typename U>
 		explicit operator mat4<U>() const;
 
-		template<typename U>
+		template<typename U> 
 		friend class mat4;
-
-	private:
-		vec4<T> data[4];
 	};
-
-	template<typename T>
-	vec4<T> operator*(const vec4<T>&, const mat4<T>&);
 
 }
 
@@ -105,10 +110,10 @@ inline ML::mat4<T>& ML::mat4<T>::operator*=(const ML::mat4<T>& in) const{
 	mat4<T> result{};
 	for (size_t i = 0; i < 4; i++) {
 		for (size_t j = 0; j < 4; j++) {
-			result[i][j] = this->data[i][0] * in->data[0][j] +
-				this->data[i][1] * in->data[1][j] +
-				this->data[i][2] * in->data[2][j] +
-				this->data[i][3] * in->data[3][j];
+			result[i][j] = this->data[i][0] * in.data[0][j] +
+				this->data[i][1] * in.data[1][j] +
+				this->data[i][2] * in.data[2][j] +
+				this->data[i][3] * in.data[3][j];
 		}
 	}
 	data[0] = result.data[0];
@@ -128,15 +133,14 @@ inline const ML::vec4<T>& ML::mat4<T>::operator[](size_t index) const {
 	return data[index];
 }
 
-
 template<typename T>
 ML::vec4<T> ML::operator*(const ML::vec4<T>& v, const ML::mat4<T>& m) {
 	vec4<T> result{};
 	for (size_t j = 0; j < 4; j++) {
-		result[j] = v->data[0] * m->data[0][j] +
-			v->data[1] * m->data[1][j] +
-			v->data[2] * m->data[2][j] +
-			v->data[3] * m->data[3][j];
+		result[j] = v[0] * m.data[0][j] +
+			v[1] * m.data[1][j] +
+			v[2] * m.data[2][j] +
+			v[3] * m.data[3][j];
 	}
 	return result;
 }

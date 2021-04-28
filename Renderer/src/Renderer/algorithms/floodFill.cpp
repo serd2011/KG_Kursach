@@ -12,24 +12,24 @@ struct Point {
 };
 
 // Draws a line on screen and returns two visible ends of the line it they exist
-std::optional<std::pair<Point, Point>> drawLine(int* screen, int width, int height, int x0, int y0, int x1, int y1, int color);
+std::optional<std::pair<Point, Point>> drawLine(std::vector<bool>& screen, int width, int height, int x0, int y0, int x1, int y1);
 bool isPointInsideTriandle(const ML::mat4<int>& vertices, Point p);
 
 static std::queue<Point> queue{};
 
 // Draws trianle in vertices on the screen with color by 4-connected flood fill algorithm
-void RNDR::algorithms::floodFill(int width, int height, int* screen, const ML::mat4<int>& vertices, int color) {
-	std::fill(screen, screen + (static_cast<size_t>(width) * static_cast<size_t>(height)), color - 1);
+void RNDR::algorithms::floodFill(int width, int height, std::vector<bool>& screen, const ML::mat4<int>& vertices) {
+	std::fill(screen.begin(), screen.end(), false);
 
 	double x = 0, y = 0; // coordinates of the first point
 	int count = 0; // count of the vertices added to x,y
-	auto tmp = drawLine(screen, width, height, vertices[1][0], vertices[1][1], vertices[2][0], vertices[2][1], color);
+	auto tmp = drawLine(screen, width, height, vertices[1][0], vertices[1][1], vertices[2][0], vertices[2][1]);
 	if (tmp.has_value()) {
 		count += 2;
 		x += static_cast<double>(tmp.value().first.x) + static_cast<double>(tmp.value().second.x);
 		y += static_cast<double>(tmp.value().first.y) + static_cast<double>(tmp.value().second.y);
 	}
-	tmp = drawLine(screen, width, height, vertices[0][0], vertices[0][1], vertices[2][0], vertices[2][1], color);
+	tmp = drawLine(screen, width, height, vertices[0][0], vertices[0][1], vertices[2][0], vertices[2][1]);
 	if (tmp.has_value()) {
 		count++;
 		x += static_cast<double>(tmp.value().first.x);
@@ -41,7 +41,7 @@ void RNDR::algorithms::floodFill(int width, int height, int* screen, const ML::m
 		}
 	}
 
-	tmp = drawLine(screen, width, height, vertices[0][0], vertices[0][1], vertices[1][0], vertices[1][1], color);
+	tmp = drawLine(screen, width, height, vertices[0][0], vertices[0][1], vertices[1][0], vertices[1][1]);
 	if (tmp.has_value()) {
 		if ((tmp.value().first.x != vertices[0][0]) || (tmp.value().first.y != vertices[0][1])) { // do not add point if it is original vertex cuz it has been added previously
 			count++;
@@ -83,8 +83,8 @@ void RNDR::algorithms::floodFill(int width, int height, int* screen, const ML::m
 	while (!queue.empty()) {
 		Point p = queue.front();
 		queue.pop();
-		if (screen[width * p.y + p.x] == (color - 1)) {
-			screen[width * p.y + p.x] = color;
+		if (screen[width * p.y + p.x] == false) {
+			screen[width * p.y + p.x] = true;
 			if (p.y + 1 < height) queue.push({ p.x,p.y + 1 });
 			if (p.y - 1 >= 0) queue.push({ p.x,p.y - 1 });
 			if (p.x + 1 < width) queue.push({ p.x + 1,p.y });
@@ -93,7 +93,7 @@ void RNDR::algorithms::floodFill(int width, int height, int* screen, const ML::m
 	}
 }
 
-std::optional<std::pair<Point, Point>> drawLine(int* screen, int width, int height, int x0, int y0, int x1, int y1, int color) {
+std::optional<std::pair<Point, Point>> drawLine(std::vector<bool>& screen, int width, int height, int x0, int y0, int x1, int y1) {
 	int x = 0, y = 0, prevX = 0, prevY = 0;
 	bool is_started = false;
 	int dx = std::abs(x1 - x0), sx = x0 < x1 ? 1 : -1;
@@ -109,7 +109,7 @@ std::optional<std::pair<Point, Point>> drawLine(int* screen, int width, int heig
 			}
 			prevX = x0;
 			prevY = y0;
-			screen[width * y0 + x0] = color;
+			screen[width * y0 + x0] = true;
 		} else {
 			if (is_started) break;
 		}

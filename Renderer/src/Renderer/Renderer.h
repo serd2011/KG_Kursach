@@ -1,6 +1,7 @@
 #pragma once
 
 #include <functional>
+#include <vector>
 
 #include "Scene/Camera.h"
 #include "Scene/Scene.h"
@@ -25,15 +26,19 @@ namespace RNDR {
 		void setDimensions(int width, int height);
 		Dimensions getDimensions();
 
+		void enableHiQualityLight(bool enabled);
+
 		void render(const Scene&, const Camera&);
 		int* getScreen();
 
 	private:
 		int width = 0;
 		int height = 0;
-		int* zBuffer = nullptr;
+		double* zBuffer = nullptr;
 		int* screen = nullptr;
-		int* tmpScreen = nullptr;
+		std::vector<bool> tmpScreen{};
+
+		bool isHiQualityLight = false;
 	};
 
 }

@@ -16,11 +16,11 @@ static RNDR::Camera camera{};
 using namespace RNDR::Literals;
 
 void stuff::init() {
-	/*scene.addMesh(RNDR::components::Mesh({ 
+	/*scene.addMesh(RNDR::components::Mesh({
 											{-1, 1, 0},
 											{ 1, -1, 0},
 											{ 1, 1, 0}
-										 }, { {0,1,2} }, 0x000FF00FF), RNDR::components::Transform{ {300,300,300} });*/
+										 }, { {0,1,2} }, { {0,0,1} }, 0x000FF00FF), RNDR::components::Transform{ {300,300,300} });*/
 	scene.addMesh(RNDR::components::Mesh({
 											 {-1,-1, 1},
 											 { 1,-1, 1},
@@ -43,6 +43,19 @@ void stuff::init() {
 											 {4, 0, 1},
 											 {3, 6, 7},
 											 {3, 2, 6},
+										 },{ 
+											 { 0, 0, 1},
+											 { 0, 0, 1},
+											 { 1, 0, 0},
+											 { 1, 0, 0},
+											 { 0, 0,-1},
+											 { 0, 0,-1},
+											 {-1, 0, 0},
+											 {-1, 0, 0},
+											 {0, -1, 0},
+											 {0, -1, 0},
+											 {0,  1, 0},
+											 {0,  1, 0},
 										 }, 0x0055FF));
 
 	scene.addMesh(RNDR::components::Mesh({
@@ -55,6 +68,11 @@ void stuff::init() {
 											 {3, 2, 1},
 											 {3, 1, 0},
 											 {0, 2, 1},
+										 }, {
+											 { 0, -0.4, 1.2},
+											 { 1.44, -0.21, -0.72},
+											 { -1.44, -0.21, -0.72},
+											 { 0, 1, 0},
 										 }, 0xFF5500));
 }
 
@@ -81,6 +99,10 @@ void stuff::changeDimensions(int width, int height) {
 
 void stuff::changeLight(int x, int y, int z) {
 	scene.addLight(RNDR::components::Light({ static_cast<double>(x), static_cast<double>(y), static_cast<double>(z) }));
+}
+
+void stuff::enableHiQualityLight(bool enable) {
+	renderer.enableHiQualityLight(enable);
 }
 
 void stuff::changeFigure(int num, TransfromType type, int x, int y, int z) {

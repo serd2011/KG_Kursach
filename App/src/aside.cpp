@@ -32,7 +32,7 @@ LRESULT CALLBACK AsideWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 BOOL CALLBACK SetChildFont(HWND hwnd, LPARAM lParam);
 
 ATOM RegisterAsideWindowClass(HINSTANCE hInstance, LPCWSTR name) {
-	
+
 	{
 		HFONT hFontTmp = (HFONT)GetStockObject(DEFAULT_GUI_FONT);
 		LOGFONT fontData;
@@ -103,7 +103,7 @@ struct GroupBox {
 
 #define IDC_GROUPBOX_1		0x100
 #define IDC_GROUPBOX_2		0x110
-#define IDC_LIGHT			0x120
+#define IDC_LIGHT_GROUPBOX	0x120
 #define IDC_BUTTON_RESET	0x200
 
 GroupBox createFigureGroupBox(LPWSTR title, SizeAndPos& size, int leftPos, HWND parent, HINSTANCE hInstance, int num);
@@ -118,7 +118,7 @@ LRESULT CALLBACK AsideWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 				HDC hdc;
 				SIZE size;
 
-				hdc = GetDC(hWnd);				
+				hdc = GetDC(hWnd);
 				SelectFont(hdc, hFontNormal);
 				GetTextExtentPoint32(hdc, TEXT("Положение:"), 10, &size);
 				ReleaseDC(hWnd, hdc);
@@ -135,7 +135,7 @@ LRESULT CALLBACK AsideWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			// Свет
 			SizeAndPos size3 = size2;
 			size3.y = size2.y + size2.height + 20;
-			size3.height = size3.padding.top + config::aside::elementHeight + size3.padding.bottom;
+			size3.height = size3.padding.top + config::aside::elementHeight * 2 + 5 + size3.padding.bottom;
 			GroupBox gb3(TEXT("Свет"), size3, hWnd, nullptr, createParams->hInstance);
 			CreateWindowW(WC_STATIC, TEXT("Положение:"),
 						  WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON | SS_CENTERIMAGE,
@@ -144,7 +144,15 @@ LRESULT CALLBACK AsideWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			HWND tmp = CreateWindowW(CONTROL_XYZ, nullptr,
 									 WS_VISIBLE | WS_CHILD,
 									 gb3.sizeAndPos.getXContent(leftPos), gb3.sizeAndPos.getYContent(), gb3.sizeAndPos.getContentWidth(-leftPos), config::aside::elementHeight,
-									 hWnd, (HMENU)IDC_LIGHT, createParams->hInstance, nullptr);
+									 hWnd, (HMENU)((size_t)IDC_LIGHT_GROUPBOX + 1), createParams->hInstance, nullptr);
+			CreateWindowW(WC_STATIC, TEXT("Высокое кач.:"),
+						  WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON | SS_CENTERIMAGE, 
+						  gb3.sizeAndPos.getXContent(), gb3.sizeAndPos.getYContent(config::aside::elementHeight + 5), leftPos, config::aside::elementHeight,
+						  hWnd, nullptr, createParams->hInstance, nullptr);
+			CreateWindowW(WC_BUTTON, TEXT(""),
+						  WS_VISIBLE | WS_CHILD | BS_AUTOCHECKBOX,
+						  gb3.sizeAndPos.getXContent(leftPos), gb3.sizeAndPos.getYContent(config::aside::elementHeight + 5), config::aside::elementHeight, config::aside::elementHeight,
+						  hWnd, (HMENU)((size_t)IDC_LIGHT_GROUPBOX + 2), createParams->hInstance, nullptr);
 			SendMessage(tmp, UDM_SETRANGE, 0, MAKELPARAM(-5000, 5000));
 			SendMessage(tmp, XYZ_SET_COLOR, (WPARAM)&xyzColorInfo, 0);
 			SendMessage(tmp, XYZ_CHANGE_DATA, 0, 0);
@@ -192,12 +200,17 @@ LRESULT CALLBACK AsideWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 				SendMessage(GetDlgItem(hWnd, IDC_GROUPBOX_2 + 2), XYZ_CHANGE_DATA, MAKEWPARAM(config::transforms::figure2::positionX, config::transforms::figure2::positionY), MAKELPARAM(config::transforms::figure2::positionZ, 0));
 				SendMessage(GetDlgItem(hWnd, IDC_GROUPBOX_2 + 3), XYZ_CHANGE_DATA, MAKEWPARAM(config::transforms::figure2::rotationX, config::transforms::figure2::rotationY), MAKELPARAM(config::transforms::figure2::rotationZ, 0));
 				SendMessage(GetDlgItem(hWnd, IDC_GROUPBOX_2 + 4), XYZ_CHANGE_DATA, MAKEWPARAM(config::transforms::figure2::scaleX, config::transforms::figure2::scaleY), MAKELPARAM(config::transforms::figure2::scaleZ, 0));
-				SendMessage(GetDlgItem(hWnd, IDC_LIGHT), XYZ_CHANGE_DATA, MAKEWPARAM(config::transforms::light::positionX, config::transforms::light::positionY), MAKELPARAM(config::transforms::light::positionZ, 0));
+				SendMessage(GetDlgItem(hWnd, IDC_LIGHT_GROUPBOX + 1), XYZ_CHANGE_DATA, MAKEWPARAM(config::transforms::light::positionX, config::transforms::light::positionY), MAKELPARAM(config::transforms::light::positionZ, 0));
 
 				stuff::resetAll();
 
 				SendMessage(GetParent(hWnd), ASIDE_REQUEST_REDRAW, 0, 0);
-			}
+			}break;
+		case IDC_LIGHT_GROUPBOX + 2:
+			{
+				stuff::enableHiQualityLight(SendDlgItemMessage(hWnd, IDC_LIGHT_GROUPBOX + 2, BM_GETCHECK, 0, 0) == BST_CHECKED);
+				SendMessage(GetParent(hWnd), ASIDE_REQUEST_REDRAW, 0, 0);
+			}break;
 		}
 		break;
 	case XYZ_CHANGE_DATA:
@@ -260,7 +273,7 @@ GroupBox createFigureGroupBox(LPWSTR title, SizeAndPos& size, int leftPos, HWND 
 	SendMessage(tmp, XYZ_CHANGE_DATA, 0, 0);
 
 
-	y = gb.sizeAndPos.getYContent((config::aside::elementHeight + 2) * 1 );
+	y = gb.sizeAndPos.getYContent((config::aside::elementHeight + 2) * 1);
 	CreateWindowW(WC_STATIC, TEXT("Поворот:"),
 				  WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON | SS_CENTERIMAGE,
 				  gb.sizeAndPos.getXContent(), y, leftPos, config::aside::elementHeight,
@@ -273,7 +286,7 @@ GroupBox createFigureGroupBox(LPWSTR title, SizeAndPos& size, int leftPos, HWND 
 	SendMessage(tmp, XYZ_SET_COLOR, (WPARAM)&xyzColorInfo, 0);
 	SendMessage(tmp, XYZ_CHANGE_DATA, 0, 0);
 
-	y = gb.sizeAndPos.getYContent((config::aside::elementHeight + 2) * 2 );
+	y = gb.sizeAndPos.getYContent((config::aside::elementHeight + 2) * 2);
 	CreateWindowW(WC_STATIC, TEXT("Масштаб:"),
 				  WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON | SS_CENTERIMAGE,
 				  gb.sizeAndPos.getXContent(), y, leftPos, config::aside::elementHeight,

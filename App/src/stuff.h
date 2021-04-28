@@ -7,6 +7,7 @@ namespace stuff{
 	void draw(HDC);
 	void changeDimensions(int width, int height);
 	void changeLight(int, int, int);
+	void enableHiQualityLight(bool enable);
 
 	enum class TransfromType : int {
 		Translation,
