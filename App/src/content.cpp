@@ -4,6 +4,8 @@
 #include "config.h"
 #include "stuff.h"
 
+#include "Log/Log.h"
+
 LRESULT CALLBACK contentWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 ATOM RegisterContentWindowClass(HINSTANCE hInstance, LPCWSTR name) {
@@ -23,6 +25,9 @@ ATOM RegisterContentWindowClass(HINSTANCE hInstance, LPCWSTR name) {
 	wcexContent.hIconSm = nullptr;
 	return RegisterClassExW(&wcexContent);
 }
+
+static int prevX;
+static int prevY;
 
 LRESULT CALLBACK contentWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
 	switch (message) {
@@ -44,7 +49,32 @@ LRESULT CALLBACK contentWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 			EndPaint(hWnd, &ps);
 		}
 		break;
-
+	case WM_MOUSEMOVE:
+		{
+			if (wParam & MK_LBUTTON) {
+				RECT rect;
+				GetClientRect(hWnd, &rect);
+				int width = rect.right - rect.left;
+				int height = rect.bottom - rect.top;
+				int x = GET_X_LPARAM(lParam);
+				int y = GET_Y_LPARAM(lParam);
+				int dx = x - prevX;
+				int dy = y - prevY;
+				prevX = x;
+				prevY = y;
+				double dxRel = (double)dx / (double)width;
+				double dyRel = (double)dy / (double)height;
+				stuff::changeCamera(dxRel, dyRel);
+				SendMessage(GetParent(hWnd), CONTENT_REQUEST_REDRAW, 0, 0);
+			}
+		}
+		break;
+	case WM_LBUTTONDOWN:
+		{
+			prevX = GET_X_LPARAM(lParam);
+			prevY = GET_Y_LPARAM(lParam);
+		}
+		break;
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		break;

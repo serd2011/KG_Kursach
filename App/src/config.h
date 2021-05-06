@@ -53,8 +53,8 @@ namespace config {
 
 	namespace transforms {
 		namespace figure1 {
-			constexpr int positionX = 500;
-			constexpr int positionY = 500;
+			constexpr int positionX = 0;
+			constexpr int positionY = 0;
 			constexpr int positionZ = 0;
 			constexpr int rotationX = 100;
 			constexpr int rotationY = 0;
@@ -64,8 +64,8 @@ namespace config {
 			constexpr int scaleZ = 200;
 		}
 		namespace figure2 {
-			constexpr int positionX = 550;
-			constexpr int positionY = 470;
+			constexpr int positionX = 0;
+			constexpr int positionY = 0;
 			constexpr int positionZ = 60;
 			constexpr int rotationX = -40;
 			constexpr int rotationY = 170;
@@ -79,5 +79,10 @@ namespace config {
 			constexpr int positionY = 500;
 			constexpr int positionZ = 300;
 		}
+	}
+
+	namespace camera {
+		constexpr double yawAngle = 90.0;
+		constexpr double pitchAngle = 0.0;
 	}
 }

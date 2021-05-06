@@ -2,6 +2,7 @@
 #include "pch.h"
 
 #define CONTROL_XYZ TEXT("XYZ Control")
+#define CONTROL_LABEL_WITH_EDIT TEXT("XYZ Label Edit")
 
 //WPARAM - ColorInfo*
 #define XYZ_SET_COLOR (WM_USER + 0x0001)
@@ -19,6 +20,14 @@ struct ColorInfo {
 	COLORREF editForeground;
 };
 
+struct LabelAndEditColorInfo {
+	COLORREF labelBackground;
+	COLORREF labelForegound;
+	COLORREF editBackground;
+	COLORREF editForegound;
+};
+
+
 struct Data {
 	int x;
 	int y;
@@ -26,3 +35,4 @@ struct Data {
 };
 
 ATOM RegisterXYZControlWindowClass(HINSTANCE hInstance);
+ATOM RegisterLableWithAditControlWindowClass(HINSTANCE hInstance);

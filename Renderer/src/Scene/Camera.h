@@ -14,13 +14,14 @@ namespace RNDR {
 		const ML::mat4<double>& getProjectionMetrix() const;
 
 		void setFov(int fovx, int fovy);
-		void setPosition(ML::vec4<double> position, ML::vec4<double> direction);
+		void RNDR::Camera::setPosition(ML::vec4<double> position, ML::vec4<double>target);
+
 
 	private:
 		int fovx = 60;
 		int fovy = 40;
 		ML::vec4<double> position;
-		ML::vec4<double> direction;
+		ML::vec4<double> target;
 		ML::mat4<double> matrix;
 
 		void recalculateMatrix();

@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include <cmath>
+
 namespace ML {
 
 	template<typename T>
@@ -25,6 +27,9 @@ namespace ML {
 	// Смешанное произведение
 	template<typename T>
 	T tripleProduct(const vec4<T>&, const vec4<T>&, const vec4<T>&);
+
+	template<typename T>
+	vec4<T> normalize(const vec4<T>&);
 
 	template<typename T>
 	class vec4 {
@@ -200,4 +205,11 @@ T ML::dotProduct(const vec4<T>& first, const vec4<T>& second) {
 template<typename T>
 T ML::tripleProduct(const vec4<T>& first, const vec4<T>& second, const vec4<T>& third) {
 	return dotProduct(first, crossProduct(second, third));
+}
+
+template<typename T>
+ML::vec4<T> ML::normalize(const vec4<T>& v) {
+	T length = std::sqrt(std::pow(v[0], 2) + std::pow(v[1], 2) + std::pow(v[2], 2));
+	if (length == 0) return v;
+	return vec4<T>(v[0] / length, v[1] / length, v[2] / length);
 }

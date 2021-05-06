@@ -8,6 +8,8 @@ namespace stuff{
 	void changeDimensions(int width, int height);
 	void changeLight(int, int, int);
 	void enableHiQualityLight(bool enable);
+	
+	void changeCamera(double dx,double dy);
 
 	enum class TransfromType : int {
 		Translation,

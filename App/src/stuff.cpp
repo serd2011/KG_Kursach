@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "stuff.h"
+#include <cmath>
 
 #include "config.h"
 
@@ -15,12 +16,10 @@ static RNDR::Camera camera{};
 
 using namespace RNDR::Literals;
 
+static double yawCameraAngle;
+static double pitchCameraAngle;
+
 void stuff::init() {
-	/*scene.addMesh(RNDR::components::Mesh({
-											{-1, 1, 0},
-											{ 1, -1, 0},
-											{ 1, 1, 0}
-										 }, { {0,1,2} }, { {0,0,1} }, 0x000FF00FF), RNDR::components::Transform{ {300,300,300} });*/
 	scene.addMesh(RNDR::components::Mesh({
 											 {-1,-1, 1},
 											 { 1,-1, 1},
@@ -74,6 +73,10 @@ void stuff::init() {
 											 { -1.44, -0.21, -0.72},
 											 { 0, 1, 0},
 										 }, 0xFF5500));
+
+	yawCameraAngle = config::camera::yawAngle;
+	pitchCameraAngle = config::camera::pitchAngle;
+	stuff::changeCamera(0.0, 0.0);
 }
 
 void stuff::draw(HDC hdc) {
@@ -95,6 +98,7 @@ void stuff::draw(HDC hdc) {
 
 void stuff::changeDimensions(int width, int height) {
 	renderer.setDimensions(width, height);
+	LOG_INFO("Dimensions set to {%d, %d}", width, height);
 }
 
 void stuff::changeLight(int x, int y, int z) {
@@ -103,6 +107,18 @@ void stuff::changeLight(int x, int y, int z) {
 
 void stuff::enableHiQualityLight(bool enable) {
 	renderer.enableHiQualityLight(enable);
+}
+
+void stuff::changeCamera(double dx, double dy){
+	yawCameraAngle += dx * 200;
+	pitchCameraAngle -= dy * 200;
+	if (pitchCameraAngle > 90) pitchCameraAngle = 90;
+	if (pitchCameraAngle < -90) pitchCameraAngle = -90;
+	double x = std::cos(toRad(yawCameraAngle)) * std::cos(toRad(pitchCameraAngle));
+	double y = std::sin(toRad(pitchCameraAngle));
+	double z = std::sin(toRad(yawCameraAngle)) * std::cos(toRad(pitchCameraAngle));
+	camera.setPosition({ x,y,z }, { 0,0,0 });
+	LOG_INFO("Yaw: %fdeg Pitch: %fdeg", yawCameraAngle, pitchCameraAngle);
 }
 
 void stuff::changeFigure(int num, TransfromType type, int x, int y, int z) {
@@ -136,5 +152,8 @@ void stuff::resetAll() {
 						{config::transforms::figure2::scaleX, config::transforms::figure2::scaleY, config::transforms::figure2::scaleZ}
 					   });
 	scene.addLight(RNDR::components::Light({ config::transforms::light::positionX, config::transforms::light::positionY,  config::transforms::light::positionZ }));
+	yawCameraAngle = config::camera::yawAngle;
+	pitchCameraAngle = config::camera::pitchAngle;
+	stuff::changeCamera(0.0, 0.0);
 	LOG_INFO("Transform: Full Reset");
 };

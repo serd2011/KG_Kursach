@@ -30,10 +30,12 @@ namespace ML {
 		mat4<T>& operator=(const mat4<U>&);
 
 		mat4 operator*(const mat4&) const;
-		mat4& operator*=(const mat4&) const;
+		mat4& operator*=(const mat4&);
 
 		vec4<T>& operator[](size_t);
 		const vec4<T>& operator[](size_t) const;
+
+		void setColumn(size_t column, T value);
 
 	private:
 		vec4<T> data[4];
@@ -43,7 +45,7 @@ namespace ML {
 		template<typename U>
 		explicit operator mat4<U>() const;
 
-		template<typename U> 
+		template<typename U>
 		friend class mat4;
 	};
 
@@ -92,11 +94,11 @@ inline ML::mat4<T>& ML::mat4<T>::operator=(const ML::mat4<U>& in) {
 }
 
 template<typename T>
-inline ML::mat4<T> ML::mat4<T>::operator*(const ML::mat4<T>& in) const{
+inline ML::mat4<T> ML::mat4<T>::operator*(const ML::mat4<T>& in) const {
 	mat4<T> result{};
 	for (size_t i = 0; i < 4; i++) {
 		for (size_t j = 0; j < 4; j++) {
-			result[i][j] = this->data[i][0] * in.data[0][j] +
+			result.data[i][j] = this->data[i][0] * in.data[0][j] +
 				this->data[i][1] * in.data[1][j] +
 				this->data[i][2] * in.data[2][j] +
 				this->data[i][3] * in.data[3][j];
@@ -106,20 +108,20 @@ inline ML::mat4<T> ML::mat4<T>::operator*(const ML::mat4<T>& in) const{
 }
 
 template<typename T>
-inline ML::mat4<T>& ML::mat4<T>::operator*=(const ML::mat4<T>& in) const{
+inline ML::mat4<T>& ML::mat4<T>::operator*=(const ML::mat4<T>& in) {
 	mat4<T> result{};
 	for (size_t i = 0; i < 4; i++) {
 		for (size_t j = 0; j < 4; j++) {
-			result[i][j] = this->data[i][0] * in.data[0][j] +
+			result.data[i][j] = this->data[i][0] * in.data[0][j] +
 				this->data[i][1] * in.data[1][j] +
 				this->data[i][2] * in.data[2][j] +
 				this->data[i][3] * in.data[3][j];
 		}
 	}
-	data[0] = result.data[0];
-	data[1] = result.data[1];
-	data[2] = result.data[2];
-	data[3] = result.data[3];
+	this->data[0] = result.data[0];
+	this->data[1] = result.data[1];
+	this->data[2] = result.data[2];
+	this->data[3] = result.data[3];
 	return *this;
 }
 
@@ -131,6 +133,14 @@ inline ML::vec4<T>& ML::mat4<T>::operator[](size_t index) {
 template<typename T>
 inline const ML::vec4<T>& ML::mat4<T>::operator[](size_t index) const {
 	return data[index];
+}
+
+template<typename T>
+inline void ML::mat4<T>::setColumn(size_t column, T value) {
+	this->data[0][column] = value;
+	this->data[1][column] = value;
+	this->data[2][column] = value;
+	this->data[3][column] = value;
 }
 
 template<typename T>

@@ -1,33 +1,12 @@
 #include "pch.h"
 #include "xyzControl.h"
 
-#define CONTROL_LABEL_WITH_EDIT TEXT("XYZ Label Edit")
-
-struct LabelAditColorInfo {
-	COLORREF labelBackground;
-	COLORREF labelForegound;
-	COLORREF editBackground;
-	COLORREF editForegound;
-};
-
 LRESULT CALLBACK xyzControlWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK LabelEditWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 ATOM RegisterXYZControlWindowClass(HINSTANCE hInstance) {
-	WNDCLASSEXW wcexLabelEdit;
-	wcexLabelEdit.cbSize = sizeof(WNDCLASSEX);
-	wcexLabelEdit.style = CS_HREDRAW | CS_VREDRAW;
-	wcexLabelEdit.lpfnWndProc = LabelEditWndProc;
-	wcexLabelEdit.cbClsExtra = 0;
-	wcexLabelEdit.cbWndExtra = 0;
-	wcexLabelEdit.hInstance = hInstance;
-	wcexLabelEdit.hIcon = nullptr;
-	wcexLabelEdit.hCursor = LoadCursor(nullptr, IDC_ARROW);
-	wcexLabelEdit.hbrBackground = (HBRUSH)0;
-	wcexLabelEdit.lpszMenuName = nullptr;
-	wcexLabelEdit.lpszClassName = CONTROL_LABEL_WITH_EDIT;
-	wcexLabelEdit.hIconSm = nullptr;
-	RegisterClassExW(&wcexLabelEdit);
+
+	RegisterLableWithAditControlWindowClass(hInstance);
 
 	WNDCLASSEXW wcex;
 	wcex.cbSize = sizeof(WNDCLASSEX);
@@ -43,6 +22,23 @@ ATOM RegisterXYZControlWindowClass(HINSTANCE hInstance) {
 	wcex.lpszClassName = CONTROL_XYZ;
 	wcex.hIconSm = nullptr;
 	return RegisterClassExW(&wcex);
+}
+
+ATOM RegisterLableWithAditControlWindowClass(HINSTANCE hInstance) {
+	WNDCLASSEXW wcexLabelEdit;
+	wcexLabelEdit.cbSize = sizeof(WNDCLASSEX);
+	wcexLabelEdit.style = CS_HREDRAW | CS_VREDRAW;
+	wcexLabelEdit.lpfnWndProc = LabelEditWndProc;
+	wcexLabelEdit.cbClsExtra = 0;
+	wcexLabelEdit.cbWndExtra = 0;
+	wcexLabelEdit.hInstance = hInstance;
+	wcexLabelEdit.hIcon = nullptr;
+	wcexLabelEdit.hCursor = LoadCursor(nullptr, IDC_ARROW);
+	wcexLabelEdit.hbrBackground = (HBRUSH)0;
+	wcexLabelEdit.lpszMenuName = nullptr;
+	wcexLabelEdit.lpszClassName = CONTROL_LABEL_WITH_EDIT;
+	wcexLabelEdit.hIconSm = nullptr;
+	return RegisterClassExW(&wcexLabelEdit);
 }
 
 #define IDC_X 0x001
@@ -86,7 +82,7 @@ LRESULT CALLBACK xyzControlWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARA
 	case XYZ_SET_COLOR:
 		{
 			ColorInfo* info = (ColorInfo*)wParam;
-			LabelAditColorInfo tmp{ info->xLabelBackground,info->xLabelForeground,info->editBackground,info->editForeground };
+			LabelAndEditColorInfo tmp{ info->xLabelBackground,info->xLabelForeground,info->editBackground,info->editForeground };
 			SendMessage(GetDlgItem(hWnd, IDC_X), XYZ_SET_COLOR, (WPARAM)&tmp, 0);
 			tmp = { info->yLabelBackground,info->yLabelForeground,info->editBackground,info->editForeground };
 			SendMessage(GetDlgItem(hWnd, IDC_Y), XYZ_SET_COLOR, (WPARAM)&tmp, 0);
@@ -257,7 +253,7 @@ LRESULT CALLBACK LabelEditWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM
 	case XYZ_SET_COLOR:
 		{
 			ColorDataMultiple* data = (ColorDataMultiple*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
-			LabelAditColorInfo* info = (LabelAditColorInfo*)wParam;
+			LabelAndEditColorInfo* info = (LabelAndEditColorInfo*)wParam;
 			data->labelData.setBackgroung(info->labelBackground);
 			data->labelData.setForeground(info->labelForegound);
 			data->editData.setBackgroung(info->editBackground);

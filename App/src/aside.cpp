@@ -137,14 +137,20 @@ LRESULT CALLBACK AsideWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			size3.y = size2.y + size2.height + 20;
 			size3.height = size3.padding.top + config::aside::elementHeight * 2 + 5 + size3.padding.bottom;
 			GroupBox gb3(TEXT("Свет"), size3, hWnd, nullptr, createParams->hInstance);
+			// Положение света
 			CreateWindowW(WC_STATIC, TEXT("Положение:"),
 						  WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON | SS_CENTERIMAGE,
 						  gb3.sizeAndPos.getXContent(), gb3.sizeAndPos.getYContent(), leftPos, config::aside::elementHeight,
 						  hWnd, nullptr, createParams->hInstance, nullptr);
-			HWND tmp = CreateWindowW(CONTROL_XYZ, nullptr,
+			HWND lightPositionXYZControl = CreateWindowW(CONTROL_XYZ, nullptr,
 									 WS_VISIBLE | WS_CHILD,
 									 gb3.sizeAndPos.getXContent(leftPos), gb3.sizeAndPos.getYContent(), gb3.sizeAndPos.getContentWidth(-leftPos), config::aside::elementHeight,
 									 hWnd, (HMENU)((size_t)IDC_LIGHT_GROUPBOX + 1), createParams->hInstance, nullptr);
+			SendMessage(lightPositionXYZControl, UDM_SETRANGE, 0, MAKELPARAM(-5000, 5000));
+			SendMessage(lightPositionXYZControl, XYZ_SET_COLOR, (WPARAM)&xyzColorInfo, 0);
+			SendMessage(lightPositionXYZControl, XYZ_CHANGE_DATA, 0, 0);
+
+			// Переключатель качества
 			CreateWindowW(WC_STATIC, TEXT("Высокое кач.:"),
 						  WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON | SS_CENTERIMAGE, 
 						  gb3.sizeAndPos.getXContent(), gb3.sizeAndPos.getYContent(config::aside::elementHeight + 5), leftPos, config::aside::elementHeight,
@@ -153,11 +159,8 @@ LRESULT CALLBACK AsideWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 						  WS_VISIBLE | WS_CHILD | BS_AUTOCHECKBOX,
 						  gb3.sizeAndPos.getXContent(leftPos), gb3.sizeAndPos.getYContent(config::aside::elementHeight + 5), config::aside::elementHeight, config::aside::elementHeight,
 						  hWnd, (HMENU)((size_t)IDC_LIGHT_GROUPBOX + 2), createParams->hInstance, nullptr);
-			SendMessage(tmp, UDM_SETRANGE, 0, MAKELPARAM(-5000, 5000));
-			SendMessage(tmp, XYZ_SET_COLOR, (WPARAM)&xyzColorInfo, 0);
-			SendMessage(tmp, XYZ_CHANGE_DATA, 0, 0);
 
-			// Сбросить
+			// Кнопка сбросить
 			hWndButton = CreateWindowW(WC_BUTTON, TEXT("Сбросить"),
 									   WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON,
 									   0, 0, (createParams->cx - 20), 30,

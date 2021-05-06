@@ -136,6 +136,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 		break;
 	case WM_COMMAND:
 		break;
+	case CONTENT_REQUEST_REDRAW:
 	case ASIDE_REQUEST_REDRAW:
 		RedrawWindow(hWndContent, NULL, NULL, RDW_INVALIDATE|RDW_UPDATENOW);
 		break;

@@ -11,6 +11,9 @@ namespace ML {
 	mat4<T> translate(const mat4<T>&, const vec4<T>&);
 
 	template<typename T>
+	vec4<T> translate(const vec4<T>& m, const vec4<T>& v);
+
+	template<typename T>
 	mat4<T> rotate(const mat4<T>&, const vec4<T>&);
 
 	template<typename T>
@@ -18,6 +21,9 @@ namespace ML {
 
 	template<typename T>
 	mat4<T> scale(const mat4<T>&, const vec4<T>&);
+
+	template<typename T>
+	mat4<T> getPerspectiveProjectionMatrix();
 
 }
 
@@ -27,6 +33,12 @@ ML::mat4<T> ML::translate(const mat4<T>& m, const vec4<T>& v) {
 						{ 0,1,0,1 },
 						{ 0,0,1,1 },
 						{ v[0],v[1],v[2],1 });
+}
+
+
+template<typename T>
+ML::vec4<T> ML::translate(const vec4<T>& m, const vec4<T>& v) {
+	return  ML::vec4(m[0] + v[0], m[1] + v[1], m[2] + v[2]);
 }
 
 template<typename T>
@@ -51,7 +63,7 @@ ML::mat4<T> ML::rotate(const mat4<T>& m, const vec4<T>& v) {
 
 template<typename T>
 ML::vec4<T> ML::rotate(const vec4<T>& m, const vec4<T>& v) {
-	return m *getRotationMatrix(v);
+	return m * getRotationMatrix(v);
 }
 
 template<typename T>
@@ -60,4 +72,9 @@ ML::mat4<T> ML::scale(const mat4<T>& m, const vec4<T>& v) {
 					   { 0,v[1],0,0 },
 					   { 0,0,v[2],0 },
 					   { 0,0,0,1 });
+}
+
+template<typename T>
+ML::mat4<T> ML::getPerspectiveProjectionMatrix() {
+	return ML::mat4<T>{};
 }
