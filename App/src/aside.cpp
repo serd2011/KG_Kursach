@@ -127,11 +127,11 @@ LRESULT CALLBACK AsideWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 
 			// Фигура 1
 			SizeAndPos size{ 10,10,(createParams->cx - 20),0 ,{20,10,12,10} };
-			GroupBox gb1 = createFigureGroupBox(TEXT("Фигура 1"), size, leftPos, hWnd, createParams->hInstance, IDC_GROUPBOX_1);
+			GroupBox gb1 = createFigureGroupBox(TEXT("Куб"), size, leftPos, hWnd, createParams->hInstance, IDC_GROUPBOX_1);
 			// Фигура 2
 			SizeAndPos size2 = size;
 			size2.y = size.y + size.height + 20;
-			GroupBox gb2 = createFigureGroupBox(TEXT("Фигура 2"), size2, leftPos, hWnd, createParams->hInstance, IDC_GROUPBOX_2);
+			GroupBox gb2 = createFigureGroupBox(TEXT("Треугольная пирамида"), size2, leftPos, hWnd, createParams->hInstance, IDC_GROUPBOX_2);
 			// Свет
 			SizeAndPos size3 = size2;
 			size3.y = size2.y + size2.height + 20;
@@ -197,13 +197,13 @@ LRESULT CALLBACK AsideWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 		switch (wParam) {
 		case IDC_BUTTON_RESET:
 			{
-				SendMessage(GetDlgItem(hWnd, IDC_GROUPBOX_1 + 2), XYZ_CHANGE_DATA, MAKEWPARAM(config::transforms::figure1::positionX, config::transforms::figure1::positionY), MAKELPARAM(config::transforms::figure1::positionZ, 0));
-				SendMessage(GetDlgItem(hWnd, IDC_GROUPBOX_1 + 3), XYZ_CHANGE_DATA, MAKEWPARAM(config::transforms::figure1::rotationX, config::transforms::figure1::rotationY), MAKELPARAM(config::transforms::figure1::rotationZ, 0));
-				SendMessage(GetDlgItem(hWnd, IDC_GROUPBOX_1 + 4), XYZ_CHANGE_DATA, MAKEWPARAM(config::transforms::figure1::scaleX, config::transforms::figure1::scaleY), MAKELPARAM(config::transforms::figure1::scaleZ, 0));
-				SendMessage(GetDlgItem(hWnd, IDC_GROUPBOX_2 + 2), XYZ_CHANGE_DATA, MAKEWPARAM(config::transforms::figure2::positionX, config::transforms::figure2::positionY), MAKELPARAM(config::transforms::figure2::positionZ, 0));
-				SendMessage(GetDlgItem(hWnd, IDC_GROUPBOX_2 + 3), XYZ_CHANGE_DATA, MAKEWPARAM(config::transforms::figure2::rotationX, config::transforms::figure2::rotationY), MAKELPARAM(config::transforms::figure2::rotationZ, 0));
-				SendMessage(GetDlgItem(hWnd, IDC_GROUPBOX_2 + 4), XYZ_CHANGE_DATA, MAKEWPARAM(config::transforms::figure2::scaleX, config::transforms::figure2::scaleY), MAKELPARAM(config::transforms::figure2::scaleZ, 0));
-				SendMessage(GetDlgItem(hWnd, IDC_LIGHT_GROUPBOX + 1), XYZ_CHANGE_DATA, MAKEWPARAM(config::transforms::light::positionX, config::transforms::light::positionY), MAKELPARAM(config::transforms::light::positionZ, 0));
+				SendMessage(GetDlgItem(hWnd, IDC_GROUPBOX_1 + 2), XYZ_CHANGE_DATA, MAKEWPARAM(config::objects::figure1::positionX, config::objects::figure1::positionY), MAKELPARAM(config::objects::figure1::positionZ, 0));
+				SendMessage(GetDlgItem(hWnd, IDC_GROUPBOX_1 + 3), XYZ_CHANGE_DATA, MAKEWPARAM(config::objects::figure1::rotationX, config::objects::figure1::rotationY), MAKELPARAM(config::objects::figure1::rotationZ, 0));
+				SendMessage(GetDlgItem(hWnd, IDC_GROUPBOX_1 + 4), XYZ_CHANGE_DATA, MAKEWPARAM(config::objects::figure1::scaleX, config::objects::figure1::scaleY), MAKELPARAM(config::objects::figure1::scaleZ, 0));
+				SendMessage(GetDlgItem(hWnd, IDC_GROUPBOX_2 + 2), XYZ_CHANGE_DATA, MAKEWPARAM(config::objects::figure2::positionX, config::objects::figure2::positionY), MAKELPARAM(config::objects::figure2::positionZ, 0));
+				SendMessage(GetDlgItem(hWnd, IDC_GROUPBOX_2 + 3), XYZ_CHANGE_DATA, MAKEWPARAM(config::objects::figure2::rotationX, config::objects::figure2::rotationY), MAKELPARAM(config::objects::figure2::rotationZ, 0));
+				SendMessage(GetDlgItem(hWnd, IDC_GROUPBOX_2 + 4), XYZ_CHANGE_DATA, MAKEWPARAM(config::objects::figure2::scaleX, config::objects::figure2::scaleY), MAKELPARAM(config::objects::figure2::scaleZ, 0));
+				SendMessage(GetDlgItem(hWnd, IDC_LIGHT_GROUPBOX + 1), XYZ_CHANGE_DATA, MAKEWPARAM(config::objects::light::positionX, config::objects::light::positionY), MAKELPARAM(config::objects::light::positionZ, 0));
 
 				stuff::resetAll();
 

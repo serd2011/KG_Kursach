@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "stuff.h"
-#include <cmath>
 
 #include "config.h"
 
@@ -8,11 +7,14 @@
 #include "MathLib/literals.h"
 #include "Log/Log.h"
 
-#include <chrono>
+#include "Scene/components/sampleMeshes/pack1.h"
 
-static RNDR::Renderer renderer{};
-static RNDR::Scene scene{};
-static RNDR::Camera camera{};
+#include <chrono>
+#include <cmath>
+
+static RNDR::Renderer renderer(static_cast<int>(config::content::background));
+static RNDR::Scene scene;
+static RNDR::Camera camera;
 
 using namespace RNDR::Literals;
 
@@ -20,63 +22,8 @@ static double yawCameraAngle;
 static double pitchCameraAngle;
 
 void stuff::init() {
-	scene.addMesh(RNDR::components::Mesh({
-											 {-1,-1, 1},
-											 { 1,-1, 1},
-											 { 1, 1, 1},
-											 {-1, 1, 1},
-											 {-1,-1,-1},
-											 { 1,-1,-1},
-											 { 1, 1,-1},
-											 {-1, 1,-1}
-										 }, {
-											 {0, 2, 1},
-											 {0, 3, 2},
-											 {1, 6, 5},
-											 {1, 2, 6},
-											 {5, 7, 4},
-											 {5, 6, 7},
-											 {4, 3, 0},
-											 {4, 7, 3},
-											 {4, 1, 5},
-											 {4, 0, 1},
-											 {3, 6, 7},
-											 {3, 2, 6},
-										 },{ 
-											 { 0, 0, 1},
-											 { 0, 0, 1},
-											 { 1, 0, 0},
-											 { 1, 0, 0},
-											 { 0, 0,-1},
-											 { 0, 0,-1},
-											 {-1, 0, 0},
-											 {-1, 0, 0},
-											 {0, -1, 0},
-											 {0, -1, 0},
-											 {0,  1, 0},
-											 {0,  1, 0},
-										 }, 0x0055FF));
-
-	scene.addMesh(RNDR::components::Mesh({
-											 {-1, 1, 1},
-											 { 0, 1,-1},
-											 { 1, 1, 1},
-											 { 0,-2, 0},
-										 }, {
-											 {3, 0, 2},
-											 {3, 2, 1},
-											 {3, 1, 0},
-											 {0, 2, 1},
-										 }, {
-											 { 0, -0.4, 1.2},
-											 { 1.44, -0.21, -0.72},
-											 { -1.44, -0.21, -0.72},
-											 { 0, 1, 0},
-										 }, 0xFF5500));
-
-	yawCameraAngle = config::camera::yawAngle;
-	pitchCameraAngle = config::camera::pitchAngle;
-	stuff::changeCamera(0.0, 0.0);
+	scene.addMesh(RNDR::Samples::Mesh::createCubeMesh(config::objects::figure1::color));
+	scene.addMesh(RNDR::Samples::Mesh::createTriangularPyramidMesh(config::objects::figure2::color));
 }
 
 void stuff::draw(HDC hdc) {
@@ -142,18 +89,18 @@ void stuff::changeFigure(int num, TransfromType type, int x, int y, int z) {
 
 void stuff::resetAll() {
 	scene.setTransform(0, {
-						{config::transforms::figure1::positionX, config::transforms::figure1::positionY, config::transforms::figure1::positionZ},
-						{toRad(config::transforms::figure1::rotationX), toRad(config::transforms::figure1::rotationY), toRad(config::transforms::figure1::rotationZ)},
-						{config::transforms::figure1::scaleX, config::transforms::figure1::scaleY, config::transforms::figure1::scaleZ}
+						{config::objects::figure1::positionX, config::objects::figure1::positionY, config::objects::figure1::positionZ},
+						{toRad(config::objects::figure1::rotationX), toRad(config::objects::figure1::rotationY), toRad(config::objects::figure1::rotationZ)},
+						{config::objects::figure1::scaleX, config::objects::figure1::scaleY, config::objects::figure1::scaleZ}
 					   });
 	scene.setTransform(1, {
-						{config::transforms::figure2::positionX, config::transforms::figure2::positionY, config::transforms::figure2::positionZ},
-						{toRad(config::transforms::figure2::rotationX), toRad(config::transforms::figure2::rotationY), toRad(config::transforms::figure2::rotationZ)},
-						{config::transforms::figure2::scaleX, config::transforms::figure2::scaleY, config::transforms::figure2::scaleZ}
+						{config::objects::figure2::positionX, config::objects::figure2::positionY, config::objects::figure2::positionZ},
+						{toRad(config::objects::figure2::rotationX), toRad(config::objects::figure2::rotationY), toRad(config::objects::figure2::rotationZ)},
+						{config::objects::figure2::scaleX, config::objects::figure2::scaleY, config::objects::figure2::scaleZ}
 					   });
-	scene.addLight(RNDR::components::Light({ config::transforms::light::positionX, config::transforms::light::positionY,  config::transforms::light::positionZ }));
+	scene.addLight(RNDR::components::Light({ config::objects::light::positionX, config::objects::light::positionY,  config::objects::light::positionZ }));
 	yawCameraAngle = config::camera::yawAngle;
 	pitchCameraAngle = config::camera::pitchAngle;
-	stuff::changeCamera(0.0, 0.0);
+	changeCamera(0.0, 0.0);
 	LOG_INFO("Transform: Full Reset");
 };

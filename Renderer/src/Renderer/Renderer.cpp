@@ -10,7 +10,7 @@
 
 using namespace RNDR;
 
-Renderer::Renderer() {}
+Renderer::Renderer(int backgroundColor) :backgroundColor(backgroundColor) {}
 
 Renderer::~Renderer() {
 	if (this->zBuffer != nullptr) delete[] this->zBuffer;
@@ -40,12 +40,12 @@ void RNDR::Renderer::render(const Scene& scene, const Camera& camera) {
 
 	size_t pixelCount = (static_cast<size_t>(this->width) * static_cast<size_t>(this->height));
 	std::fill(this->zBuffer, this->zBuffer + pixelCount, std::numeric_limits<int>::min());
-	std::fill(this->screen, this->screen + pixelCount, 0xE1E1E1);
+	std::fill(this->screen, this->screen + pixelCount, this->backgroundColor);
 
 	ML::vec4<double> viewportTransformVec = ML::vec4<double>((this->width / 2.0), (this->height / 2.0), 0.0);
 	auto cameraProjectionMetrix = camera.getProjectionMetrix();
 	auto a = (scene.light.position * cameraProjectionMetrix);
-	ML::vec4<double> lightPosition = ML::translate( a, viewportTransformVec);
+	ML::vec4<double> lightPosition = ML::translate(a, viewportTransformVec);
 	auto modelTransformComponent = scene.transforms.begin();
 	for (auto mesh = scene.meshes.begin(); mesh != scene.meshes.end(); mesh++, modelTransformComponent++) {
 		size_t index = 0;
@@ -78,7 +78,7 @@ void RNDR::Renderer::render(const Scene& scene, const Camera& camera) {
 
 					if (this->isHiQualityLight || isFirstTime) {
 						ML::vec4<double> lightDirection = lightPosition - (this->isHiQualityLight ? ML::vec4<double>{static_cast<double>(x), static_cast<double>(y), z} : center);
-						double illumination = ML::getAngle(lightNormal, lightDirection);		
+						double illumination = ML::getAngle(lightNormal, lightDirection);
 						if (illumination < 0) illumination = 0;
 						illumination += 0.3;
 						int b = static_cast<int>(std::round(static_cast<unsigned char>(mesh->color) * illumination));
@@ -99,8 +99,6 @@ void RNDR::Renderer::render(const Scene& scene, const Camera& camera) {
 			}
 		}
 	}
-
-	// Создание тени
 }
 
 int* RNDR::Renderer::getScreen() {

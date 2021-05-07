@@ -16,7 +16,6 @@ namespace config {
 			constexpr int small = 12;
 			constexpr int normal = 14;
 		}
-
 		//colors
 	#ifndef APP_DARK_THEME
 		constexpr COLORREF background = 0xF1F1F1;
@@ -51,7 +50,7 @@ namespace config {
 	#endif
 	}
 
-	namespace transforms {
+	namespace objects {
 		namespace figure1 {
 			constexpr int positionX = 0;
 			constexpr int positionY = 0;
@@ -62,6 +61,7 @@ namespace config {
 			constexpr int scaleX = 200;
 			constexpr int scaleY = 200;
 			constexpr int scaleZ = 200;
+			constexpr COLORREF color = 0x0055FF;
 		}
 		namespace figure2 {
 			constexpr int positionX = 0;
@@ -73,6 +73,7 @@ namespace config {
 			constexpr int scaleX = 280;
 			constexpr int scaleY = 210;
 			constexpr int scaleZ = 210;
+			constexpr COLORREF color = 0xFF5500;
 		}
 		namespace light {
 			constexpr int positionX = 1000;

@@ -18,7 +18,7 @@ namespace RNDR {
 
 	class Renderer {
 	public:
-		Renderer();
+		Renderer(int backgroundColor = 0);
 		~Renderer();
 		Renderer(Renderer&) = delete;
 		Renderer& operator=(Renderer&) = delete;
@@ -37,6 +37,8 @@ namespace RNDR {
 		double* zBuffer = nullptr;
 		int* screen = nullptr;
 		std::vector<bool> tmpScreen{};
+
+		int backgroundColor = 0;
 
 		bool isHiQualityLight = false;
 	};
