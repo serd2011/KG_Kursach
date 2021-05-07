@@ -11,7 +11,7 @@ namespace RNDR {
 		Camera(Camera&) = delete;
 		Camera& operator=(Camera&) = delete;
 
-		const ML::mat4<double>& getProjectionMetrix() const;
+		const ML::mat4<double>& getProjectionMatrix() const;
 
 		void setFov(int fovx, int fovy);
 		void RNDR::Camera::setPosition(ML::vec4<double> position, ML::vec4<double>target);

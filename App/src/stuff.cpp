@@ -58,7 +58,7 @@ void stuff::enableHiQualityLight(bool enable) {
 
 void stuff::changeCamera(double dx, double dy){
 	yawCameraAngle += dx * 200;
-	pitchCameraAngle -= dy * 200;
+	pitchCameraAngle += dy * 200;
 	if (pitchCameraAngle > 90) pitchCameraAngle = 90;
 	if (pitchCameraAngle < -90) pitchCameraAngle = -90;
 	double x = std::cos(toRad(yawCameraAngle)) * std::cos(toRad(pitchCameraAngle));

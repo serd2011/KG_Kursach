@@ -1,15 +1,11 @@
 #pragma once
 
-#include <functional>
 #include <vector>
 
 #include "Scene/Camera.h"
 #include "Scene/Scene.h"
-#include "Renderer/algorithms/FloodFill.h"
 
 namespace RNDR {
-
-	using putPuxelFunctionType = std::function<void(int x, int y, int color)>;
 
 	struct Dimensions {
 		int width;
