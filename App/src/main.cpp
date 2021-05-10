@@ -6,7 +6,6 @@
 
 #include "stuff.h"
 
-#include "init.h"
 #include "Log/Log.h"
 
 constexpr auto IDN_MAIN_WINDOW = TEXT("MAIN");
@@ -30,8 +29,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
-	// Инициализация рендерера
-	RNDR::init();
+	// Инициализация логгера
+	LOG::init();
 	LOG_HIDE();
 	stuff::init();
 

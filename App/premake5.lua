@@ -9,10 +9,10 @@ project "App"
     targetdir (bindirPath .. "/%{prj.name}")
     objdir (objdirPath .. "/%{prj.name}")
 
-    includedirs (
+    includedirs {
         "%{wks.location}/Renderer/src",
         "src"
-    );
+    };
 
     files { 
         "./src/**.h",

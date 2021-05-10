@@ -23,7 +23,7 @@ namespace ML {
 	mat4<T> scale(const mat4<T>&, const vec4<T>&);
 
 	template<typename T>
-	mat4<T> getPerspectiveProjectionMatrix();
+	mat4<T> getShadow(const mat4<T>&, const vec4<T>& light);
 
 }
 
@@ -75,6 +75,13 @@ ML::mat4<T> ML::scale(const mat4<T>& m, const vec4<T>& v) {
 }
 
 template<typename T>
-ML::mat4<T> ML::getPerspectiveProjectionMatrix() {
-	return ML::mat4<T>{};
+ML::mat4<T> ML::getShadow(const mat4<T>& m, const vec4<T>& light) {
+	auto tmp =  ML::translate(m, { -light[0],-light[1],-light[2] });
+	tmp *= ML::mat4<double>(
+		{ 1,0,0,0 },
+		{ 0,1,0, (1.0 / -light[1]) },
+		{ 0,0,1,0 },
+		{ 0,0,0,0 }
+	);
+	return ML::translate(tmp, light);
 }

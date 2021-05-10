@@ -52,8 +52,8 @@ namespace config {
 
 	namespace objects {
 		namespace figure1 {
-			constexpr int positionX = 0;
-			constexpr int positionY = 0;
+			constexpr int positionX = -100;
+			constexpr int positionY = 600;
 			constexpr int positionZ = 0;
 			constexpr int rotationX = 100;
 			constexpr int rotationY = 0;
@@ -64,8 +64,8 @@ namespace config {
 			constexpr COLORREF color = 0x0055FF;
 		}
 		namespace figure2 {
-			constexpr int positionX = 0;
-			constexpr int positionY = 0;
+			constexpr int positionX = 300;
+			constexpr int positionY = 500;
 			constexpr int positionZ = 60;
 			constexpr int rotationX = -40;
 			constexpr int rotationY = 170;
@@ -76,7 +76,7 @@ namespace config {
 			constexpr COLORREF color = 0xFF5500;
 		}
 		namespace light {
-			constexpr int positionX = 1000;
+			constexpr int positionX = 0;
 			constexpr int positionY = 500;
 			constexpr int positionZ = 300;
 		}
@@ -84,6 +84,8 @@ namespace config {
 
 	namespace camera {
 		constexpr double yawAngle = 90.0;
-		constexpr double pitchAngle = 0.0;
+		constexpr double pitchAngle = 15.0;
+		constexpr double cameraX = 0;
+		constexpr double cameraY = 400;
 	}
 }

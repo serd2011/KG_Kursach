@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "Log/Log.h"
 
 #include <Windows.h>

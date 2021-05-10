@@ -20,6 +20,8 @@ using namespace RNDR::Literals;
 
 static double yawCameraAngle;
 static double pitchCameraAngle;
+static double xCameraPosition = 0;
+static double yCameraPosition = 0;
 
 void stuff::init() {
 	scene.addMesh(RNDR::Samples::Mesh::createCubeMesh(config::objects::figure1::color));
@@ -56,15 +58,20 @@ void stuff::enableHiQualityLight(bool enable) {
 	renderer.enableHiQualityLight(enable);
 }
 
-void stuff::changeCamera(double dx, double dy){
-	yawCameraAngle += dx * 200;
-	pitchCameraAngle += dy * 200;
+void stuff::changeCamera(double dx, double dy, bool isAngle){
+	if (isAngle) {
+		yawCameraAngle += dx * 200;
+		pitchCameraAngle += dy * 200;
+	} else {
+		xCameraPosition -= dx * 500;
+		yCameraPosition += dy * 500;
+	}
 	if (pitchCameraAngle > 90) pitchCameraAngle = 90;
 	if (pitchCameraAngle < -90) pitchCameraAngle = -90;
 	double x = std::cos(toRad(yawCameraAngle)) * std::cos(toRad(pitchCameraAngle));
 	double y = std::sin(toRad(pitchCameraAngle));
 	double z = std::sin(toRad(yawCameraAngle)) * std::cos(toRad(pitchCameraAngle));
-	camera.setPosition({ x,y,z }, { 0,0,0 });
+	camera.setPosition({ x + xCameraPosition,y+ yCameraPosition,z }, { xCameraPosition,yCameraPosition,0 });
 	LOG_INFO("Yaw: %fdeg Pitch: %fdeg", yawCameraAngle, pitchCameraAngle);
 }
 
@@ -101,6 +108,8 @@ void stuff::resetAll() {
 	scene.addLight(RNDR::components::Light({ config::objects::light::positionX, config::objects::light::positionY,  config::objects::light::positionZ }));
 	yawCameraAngle = config::camera::yawAngle;
 	pitchCameraAngle = config::camera::pitchAngle;
-	changeCamera(0.0, 0.0);
+	xCameraPosition = config::camera::cameraX;
+	yCameraPosition = config::camera::cameraY;
+	changeCamera(0.0, 0.0,true);
 	LOG_INFO("Transform: Full Reset");
 };

@@ -51,7 +51,7 @@ LRESULT CALLBACK contentWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 		break;
 	case WM_MOUSEMOVE:
 		{
-			if (wParam & MK_LBUTTON) {
+			if ((wParam & MK_LBUTTON) || (wParam & MK_MBUTTON)) {
 				RECT rect;
 				GetClientRect(hWnd, &rect);
 				int width = rect.right - rect.left;
@@ -64,11 +64,12 @@ LRESULT CALLBACK contentWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 				prevY = y;
 				double dxRel = (double)dx / (double)width;
 				double dyRel = (double)dy / (double)height;
-				stuff::changeCamera(dxRel, dyRel);
-				SendMessage(GetParent(hWnd), CONTENT_REQUEST_REDRAW, 0, 0);
+				stuff::changeCamera(dxRel, dyRel, (bool)(wParam & MK_LBUTTON));				
+				SendMessage(GetParent(hWnd), CONTENT_REQUEST_REDRAW, 0, 0);				
 			}
 		}
 		break;
+	case WM_MBUTTONDOWN:
 	case WM_LBUTTONDOWN:
 		{
 			prevX = GET_X_LPARAM(lParam);

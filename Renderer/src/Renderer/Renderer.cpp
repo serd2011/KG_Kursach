@@ -2,6 +2,7 @@
 
 #include <limits>
 #include <algorithm>
+#include <queue>
 
 #include "MathLib/mat4.h"
 #include "MathLib/vec4.h"
@@ -43,6 +44,7 @@ void RNDR::Renderer::render(const Scene& scene, const Camera& camera) {
 	size_t pixelCount = (static_cast<size_t>(this->width) * static_cast<size_t>(this->height));
 	std::fill(this->zBuffer, this->zBuffer + pixelCount, std::numeric_limits<int>::min());
 	std::fill(this->screen, this->screen + pixelCount, this->backgroundColor);
+	std::queue<ML::mat4<double>> triangles{};
 
 	RNDR::components::Transform viewportTransform{ { (this->width / 2.0), (this->height / 2.0), 0.0 }, {0,0,0},{1,-1,1} };
 	auto cameraProjectionMetrix = camera.getProjectionMatrix();
@@ -52,12 +54,14 @@ void RNDR::Renderer::render(const Scene& scene, const Camera& camera) {
 
 		auto normalv = mesh->normals.begin();
 		for (auto vertexIndices = mesh->faces.begin(); vertexIndices != mesh->faces.end(); vertexIndices++, normalv++) {
-
+			
 			ML::mat4<double> face = ML::mat4<double>(
 				mesh->vertices[vertexIndices->operator[](0)],
 				mesh->vertices[vertexIndices->operator[](1)],
 				mesh->vertices[vertexIndices->operator[](2)]
 				) * modelTransformComponent->getTransform();
+
+			ML::mat4<double> shadow = ML::getShadow(face, scene.light.position);
 
 			// calculating face color based on light position
 			ML::vec4<double> center{ (face[0][0] + face[1][0] + face[2][0]) / 3.0,(face[0][1] + face[1][1] + face[2][1]) / 3.0,(face[0][2] + face[1][2] + face[2][2]) / 3.0,0 };
@@ -75,25 +79,36 @@ void RNDR::Renderer::render(const Scene& scene, const Camera& camera) {
 			int color = b + (g << 8) + (r << 16);
 
 			face.setColumn(3, 1);
-			face *= cameraProjectionMetrix * viewportTransform.getTransform();	
+			face *= cameraProjectionMetrix * viewportTransform.getTransform();
+			face[3][0] = color;
+			triangles.push(face);
 
-			algorithms::floodFill(this->width, this->height, this->tmpScreen, face);
+			shadow.setColumn(3, 1);
+			shadow *= cameraProjectionMetrix * viewportTransform.getTransform();
+			shadow[3][0] = 0x0;
+			triangles.push(shadow);						
+		}
+	}
 
-			ML::vec4<double> zBufferNormal = ML::crossProduct((face[1] - face[0]), (face[2] - face[0]));
-			for (int i = 0; i < pixelCount; i++) {
-				if (this->tmpScreen[i] == true) {
-					int y = (i / this->width);
-					int x = i - (y * this->width);
-					double z = (ML::tripleProduct(face[0], face[1], face[2]) - x * zBufferNormal[0] - y * zBufferNormal[1]) / zBufferNormal[2];
+	while (!triangles.empty()) 	{
+		auto triangle = triangles.front();
+		triangles.pop();
+		algorithms::floodFill(this->width, this->height, this->tmpScreen, triangle);
+		ML::vec4<double> zBufferNormal = ML::crossProduct((triangle[1] - triangle[0]), (triangle[2] - triangle[0]));
+		for (int i = 0; i < pixelCount; i++) {
+			if (this->tmpScreen[i] == true) {
+				int y = (i / this->width);
+				int x = i - (y * this->width);
+				double z = (ML::tripleProduct(triangle[0], triangle[1], triangle[2]) - x * zBufferNormal[0] - y * zBufferNormal[1]) / zBufferNormal[2];
 
-					if (z >= this->zBuffer[i]) {
-						this->zBuffer[i] = z;
-						this->screen[i] = color;
-					}
+				if (z >= this->zBuffer[i]) {
+					this->zBuffer[i] = z;
+					this->screen[i] = (int)triangle[3][0];
 				}
 			}
 		}
-	}
+	}	
+
 }
 
 int* RNDR::Renderer::getScreen() {

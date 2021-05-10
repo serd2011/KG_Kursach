@@ -9,7 +9,8 @@ namespace stuff{
 	void changeLight(int, int, int);
 	void enableHiQualityLight(bool enable);
 	
-	void changeCamera(double dx,double dy);
+	void changeCamera(double dx,double dy, bool isAngle);
+
 
 	enum class TransfromType : int {
 		Translation,
