@@ -87,5 +87,7 @@ namespace config {
 		constexpr double pitchAngle = 15.0;
 		constexpr double cameraX = 0;
 		constexpr double cameraY = 400;
+		constexpr double angleMultiplier = 200;
+		constexpr double positionMultiplier = 500;
 	}
 }

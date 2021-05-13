@@ -7,7 +7,6 @@ namespace stuff{
 	void draw(HDC);
 	void changeDimensions(int width, int height);
 	void changeLight(int, int, int);
-	void enableHiQualityLight(bool enable);
 	
 	void changeCamera(double dx,double dy, bool isAngle);
 

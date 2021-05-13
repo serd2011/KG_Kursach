@@ -54,17 +54,13 @@ void stuff::changeLight(int x, int y, int z) {
 	scene.addLight(RNDR::components::Light({ static_cast<double>(x), static_cast<double>(y), static_cast<double>(z) }));
 }
 
-void stuff::enableHiQualityLight(bool enable) {
-	renderer.enableHiQualityLight(enable);
-}
-
 void stuff::changeCamera(double dx, double dy, bool isAngle){
 	if (isAngle) {
-		yawCameraAngle += dx * 200;
-		pitchCameraAngle += dy * 200;
+		yawCameraAngle += dx * config::camera::angleMultiplier;
+		pitchCameraAngle += dy * config::camera::angleMultiplier;
 	} else {
-		xCameraPosition -= dx * 500;
-		yCameraPosition += dy * 500;
+		xCameraPosition -= dx * config::camera::positionMultiplier;
+		yCameraPosition += dy *config::camera::positionMultiplier;
 	}
 	if (pitchCameraAngle > 90) pitchCameraAngle = 90;
 	if (pitchCameraAngle < -90) pitchCameraAngle = -90;

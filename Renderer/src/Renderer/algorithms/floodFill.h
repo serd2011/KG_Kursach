@@ -8,7 +8,7 @@ namespace RNDR {
 
 	namespace algorithms {
 
-		void floodFill(int width, int height,std::vector<bool>& screen,const ML::mat4<int>& vertices);
+		bool floodFill(int width, int height,std::vector<bool>& screen,const ML::mat4<int>& vertices);
 
 	}
 }

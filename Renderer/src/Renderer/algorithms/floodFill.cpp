@@ -17,8 +17,10 @@ bool isPointInsideTriandle(const ML::mat4<int>& vertices, Point p);
 
 static std::queue<Point> queue{};
 
+#define GET_POINT(screen,width,x,y) screen[(width)*(y)+(x)]
+
 // Draws trianle in vertices on the screen with color by 4-connected flood fill algorithm
-void RNDR::algorithms::floodFill(int width, int height, std::vector<bool>& screen, const ML::mat4<int>& vertices) {
+bool RNDR::algorithms::floodFill(int width, int height, std::vector<bool>& screen, const ML::mat4<int>& vertices) {
 	std::fill(screen.begin(), screen.end(), false);
 
 	double x = 0, y = 0; // coordinates of the first point
@@ -55,21 +57,25 @@ void RNDR::algorithms::floodFill(int width, int height, std::vector<bool>& scree
 		}
 	}
 
-	if (count == 0) return; // triangle is completely clipped
+	if (count == 0) return false; // triangle is completely clipped
 
 	// add corner of the screen if it is inside triangle
-	if (isPointInsideTriandle(vertices, { 0, 0 })) {
+	bool isTL = isPointInsideTriandle(vertices, { 0, 0 });
+	bool isTR = isPointInsideTriandle(vertices, { width - 1, 0 });
+	bool isBL = isPointInsideTriandle(vertices, { 0, height - 1 });
+	bool isBR = isPointInsideTriandle(vertices, { width - 1, height - 1 });
+	if (isTL) {
 		count++;
 	}
-	if (isPointInsideTriandle(vertices, { width - 1, 0 })) {
+	if (isTR) {
 		count++;
 		x += width - 1;
 	}
-	if (isPointInsideTriandle(vertices, { 0, height - 1 })) {
+	if (isBL) {
 		count++;
 		y += height - 1;
 	}
-	if (isPointInsideTriandle(vertices, { width - 1, height - 1 })) {
+	if (isBR) {
 		count++;
 		x += width - 1;
 		y += height - 1;
@@ -83,14 +89,19 @@ void RNDR::algorithms::floodFill(int width, int height, std::vector<bool>& scree
 	while (!queue.empty()) {
 		Point p = queue.front();
 		queue.pop();
-		if (screen[width * p.y + p.x] == false) {
-			screen[width * p.y + p.x] = true;
+		if (GET_POINT(screen, width, p.x, p.y) == false) {
+			GET_POINT(screen, width, p.x, p.y) = true;
 			if (p.y + 1 < height) queue.push({ p.x,p.y + 1 });
 			if (p.y - 1 >= 0) queue.push({ p.x,p.y - 1 });
 			if (p.x + 1 < width) queue.push({ p.x + 1,p.y });
 			if (p.x - 1 >= 0) queue.push({ p.x - 1,p.y });
 		}
 	}
+	if (GET_POINT(screen, width, 0, 0) && !isTL) return false;
+	if (GET_POINT(screen, width, width - 1, 0) && !isTR) return false;
+	if (GET_POINT(screen, width, 0, height - 1) && !isBL) return false;
+	if (GET_POINT(screen, width, width - 1, height - 1) && !isBR) return false;
+	return true;
 }
 
 std::optional<std::pair<Point, Point>> drawLine(std::vector<bool>& screen, int width, int height, int x0, int y0, int x1, int y1) {
@@ -109,7 +120,7 @@ std::optional<std::pair<Point, Point>> drawLine(std::vector<bool>& screen, int w
 			}
 			prevX = x0;
 			prevY = y0;
-			screen[width * y0 + x0] = true;
+			GET_POINT(screen, width, x0, y0) = true;
 		} else {
 			if (is_started) break;
 		}

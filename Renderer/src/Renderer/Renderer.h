@@ -22,8 +22,6 @@ namespace RNDR {
 		void setDimensions(int width, int height);
 		Dimensions getDimensions();
 
-		void enableHiQualityLight(bool enabled);
-
 		void render(const Scene&, const Camera&);
 		int* getScreen();
 
@@ -35,8 +33,6 @@ namespace RNDR {
 		std::vector<bool> tmpScreen{};
 
 		int backgroundColor = 0;
-
-		bool isHiQualityLight = false;
 	};
 
 }

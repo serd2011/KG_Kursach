@@ -135,7 +135,7 @@ LRESULT CALLBACK AsideWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			// Свет
 			SizeAndPos size3 = size2;
 			size3.y = size2.y + size2.height + 20;
-			size3.height = size3.padding.top + config::aside::elementHeight * 2 + 5 + size3.padding.bottom;
+			size3.height = size3.padding.top + config::aside::elementHeight + 5 + size3.padding.bottom;
 			GroupBox gb3(TEXT("Свет"), size3, hWnd, nullptr, createParams->hInstance);
 			// Положение света
 			CreateWindowW(WC_STATIC, TEXT("Положение:"),
@@ -148,17 +148,7 @@ LRESULT CALLBACK AsideWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 									 hWnd, (HMENU)((size_t)IDC_LIGHT_GROUPBOX + 1), createParams->hInstance, nullptr);
 			SendMessage(lightPositionXYZControl, UDM_SETRANGE, 0, MAKELPARAM(-5000, 5000));
 			SendMessage(lightPositionXYZControl, XYZ_SET_COLOR, (WPARAM)&xyzColorInfo, 0);
-			SendMessage(lightPositionXYZControl, XYZ_CHANGE_DATA, 0, 0);
-
-			// Переключатель качества
-			CreateWindowW(WC_STATIC, TEXT("Высокое кач.:"),
-						  WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON | SS_CENTERIMAGE, 
-						  gb3.sizeAndPos.getXContent(), gb3.sizeAndPos.getYContent(config::aside::elementHeight + 5), leftPos, config::aside::elementHeight,
-						  hWnd, nullptr, createParams->hInstance, nullptr);
-			CreateWindowW(WC_BUTTON, TEXT(""),
-						  WS_VISIBLE | WS_CHILD | BS_AUTOCHECKBOX,
-						  gb3.sizeAndPos.getXContent(leftPos), gb3.sizeAndPos.getYContent(config::aside::elementHeight + 5), config::aside::elementHeight, config::aside::elementHeight,
-						  hWnd, (HMENU)((size_t)IDC_LIGHT_GROUPBOX + 2), createParams->hInstance, nullptr);
+			SendMessage(lightPositionXYZControl, XYZ_CHANGE_DATA, 0, 0);			
 
 			// Кнопка сбросить
 			hWndButton = CreateWindowW(WC_BUTTON, TEXT("Сбросить"),
@@ -208,12 +198,7 @@ LRESULT CALLBACK AsideWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 				stuff::resetAll();
 
 				SendMessage(GetParent(hWnd), ASIDE_REQUEST_REDRAW, 0, 0);
-			}break;
-		case IDC_LIGHT_GROUPBOX + 2:
-			{
-				stuff::enableHiQualityLight(SendDlgItemMessage(hWnd, IDC_LIGHT_GROUPBOX + 2, BM_GETCHECK, 0, 0) == BST_CHECKED);
-				SendMessage(GetParent(hWnd), ASIDE_REQUEST_REDRAW, 0, 0);
-			}break;
+			}break;	
 		}
 		break;
 	case XYZ_CHANGE_DATA:

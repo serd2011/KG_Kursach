@@ -331,6 +331,17 @@ LRESULT CALLBACK EditSubClassProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
 			}
 			return 0;
 		}
+	case WM_MOUSEWHEEL:
+		{
+			BOOL tmp;
+			short data = GetDlgItemInt(GetParent(hWnd), IDC_EDIT, &tmp, TRUE);
+			data += (((short)HIWORD(wParam) > 0) ? 10 : -10);
+			if (data > ((EditRangeData*)dwRefData)->max) data = ((EditRangeData*)dwRefData)->min;
+			else if (data < ((EditRangeData*)dwRefData)->min) data = ((EditRangeData*)dwRefData)->max;
+			SetDlgItemInt(GetParent(hWnd), IDC_EDIT, (UINT)data, TRUE);
+			SendMessage(GetParent(hWnd), WM_COMMAND, MAKEWPARAM(0, EN_CHANGE), 0);
+			return 0;
+		}
 	case UDM_SETRANGE:
 		{
 			((EditRangeData*)dwRefData)->min = LOWORD(lParam);
