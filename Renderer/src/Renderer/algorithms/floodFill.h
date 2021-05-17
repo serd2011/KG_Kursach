@@ -1,8 +1,8 @@
 #pragma once
 
-#include "MathLib/mat4.h"
-
 #include <vector>
+
+#include "MathLib/mat4.h"
 
 namespace RNDR {
 

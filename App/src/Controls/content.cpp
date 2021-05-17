@@ -1,14 +1,11 @@
 ﻿#include "pch.h"
 #include "content.h"
 
-#include "config.h"
-#include "stuff.h"
-
-#include "Log/Log.h"
+#include "stuff/stuff.h"
 
 LRESULT CALLBACK contentWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
-ATOM RegisterContentWindowClass(HINSTANCE hInstance, LPCWSTR name) {
+ATOM RegisterContentWindowClass(HINSTANCE hInstance) {
 	WNDCLASSEXW wcexContent;
 	wcexContent.cbSize = sizeof(WNDCLASSEX);
 	wcexContent.style = CS_HREDRAW | CS_VREDRAW;
@@ -21,16 +18,26 @@ ATOM RegisterContentWindowClass(HINSTANCE hInstance, LPCWSTR name) {
 	HBRUSH backgroundBrushContent = CreateSolidBrush(config::content::background);
 	wcexContent.hbrBackground = backgroundBrushContent;
 	wcexContent.lpszMenuName = nullptr;
-	wcexContent.lpszClassName = name;
+	wcexContent.lpszClassName = IDN_CONTENT;
 	wcexContent.hIconSm = nullptr;
 	return RegisterClassExW(&wcexContent);
 }
 
-static int prevX;
-static int prevY;
+struct Data {
+	int prevX;
+	int prevY;
+};
 
 LRESULT CALLBACK contentWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
 	switch (message) {
+	case WM_NCCREATE:
+		{
+			Data* data = new Data();
+			if (data == nullptr) return FALSE;
+			SetWindowLongPtr(hWnd, GWLP_USERDATA, (LONG_PTR)data);
+			return TRUE;
+		}
+		break;
 	case WM_SIZE:
 		{
 			RECT rect;
@@ -52,16 +59,17 @@ LRESULT CALLBACK contentWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 	case WM_MOUSEMOVE:
 		{
 			if ((wParam & MK_LBUTTON) || (wParam & MK_MBUTTON)) {
+				Data* data = (Data*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
 				RECT rect;
 				GetClientRect(hWnd, &rect);
 				int width = rect.right - rect.left;
 				int height = rect.bottom - rect.top;
 				int x = GET_X_LPARAM(lParam);
 				int y = GET_Y_LPARAM(lParam);
-				int dx = x - prevX;
-				int dy = y - prevY;
-				prevX = x;
-				prevY = y;
+				int dx = x - data->prevX;
+				int dy = y - data->prevY;
+				data->prevX = x;
+				data->prevY = y;
 				double dxRel = (double)dx / (double)width;
 				double dyRel = (double)dy / (double)height;
 				stuff::changeCamera(dxRel, dyRel, (bool)(wParam & MK_LBUTTON));				
@@ -72,12 +80,17 @@ LRESULT CALLBACK contentWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 	case WM_MBUTTONDOWN:
 	case WM_LBUTTONDOWN:
 		{
-			prevX = GET_X_LPARAM(lParam);
-			prevY = GET_Y_LPARAM(lParam);
+			Data* data = (Data*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
+			data->prevX = GET_X_LPARAM(lParam);
+			data->prevY = GET_Y_LPARAM(lParam);
 		}
 		break;
 	case WM_DESTROY:
-		PostQuitMessage(0);
+		{
+			Data* data = (Data*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
+			delete data;
+			PostQuitMessage(0);
+		}
 		break;
 	default:
 		return DefWindowProc(hWnd, message, wParam, lParam);

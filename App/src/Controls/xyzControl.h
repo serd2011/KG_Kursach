@@ -1,8 +1,8 @@
 #pragma once
 #include "pch.h"
 
-#define CONTROL_XYZ TEXT("XYZ Control")
-#define CONTROL_LABEL_WITH_EDIT TEXT("XYZ Label Edit")
+#define IDN_XYZ_CONTROL TEXT("XYZ Control")
+#define IDN_LABEL_WITH_EDIT TEXT("XYZ Label Edit")
 
 //WPARAM - ColorInfo*
 #define XYZ_SET_COLOR (WM_USER + 0x0001)

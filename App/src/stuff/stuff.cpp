@@ -1,16 +1,13 @@
 #include "pch.h"
 #include "stuff.h"
 
-#include "config.h"
+#include <cmath>
+#include <chrono>
 
 #include "Renderer/Renderer.h"
 #include "MathLib/literals.h"
-#include "Log/Log.h"
 
 #include "Scene/components/sampleMeshes/pack1.h"
-
-#include <chrono>
-#include <cmath>
 
 static RNDR::Renderer renderer(static_cast<int>(config::content::background));
 static RNDR::Scene scene;

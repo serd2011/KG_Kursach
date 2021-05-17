@@ -1,8 +1,8 @@
 ﻿#include "pch.h"
 #include "aside.h"
 
-#include "config.h"
-#include "stuff.h"
+#include "stuff/stuff.h"
+
 #include "xyzControl.h"
 
 static HWND hWndButton;
@@ -31,7 +31,7 @@ static const ColorInfo xyzColorInfo{
 LRESULT CALLBACK AsideWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 BOOL CALLBACK SetChildFont(HWND hwnd, LPARAM lParam);
 
-ATOM RegisterAsideWindowClass(HINSTANCE hInstance, LPCWSTR name) {
+ATOM RegisterAsideWindowClass(HINSTANCE hInstance) {
 
 	{
 		HFONT hFontTmp = (HFONT)GetStockObject(DEFAULT_GUI_FONT);
@@ -57,7 +57,7 @@ ATOM RegisterAsideWindowClass(HINSTANCE hInstance, LPCWSTR name) {
 	wcexAside.hCursor = LoadCursor(nullptr, IDC_ARROW);
 	wcexAside.hbrBackground = data.backgroungBrush;
 	wcexAside.lpszMenuName = nullptr;
-	wcexAside.lpszClassName = name;
+	wcexAside.lpszClassName = IDN_ASIDE;
 	wcexAside.hIconSm = nullptr;
 	return RegisterClassExW(&wcexAside);
 }
@@ -142,7 +142,7 @@ LRESULT CALLBACK AsideWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 						  WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON | SS_CENTERIMAGE,
 						  gb3.sizeAndPos.getXContent(), gb3.sizeAndPos.getYContent(), leftPos, config::aside::elementHeight,
 						  hWnd, nullptr, createParams->hInstance, nullptr);
-			HWND lightPositionXYZControl = CreateWindowW(CONTROL_XYZ, nullptr,
+			HWND lightPositionXYZControl = CreateWindowW(IDN_XYZ_CONTROL, nullptr,
 									 WS_VISIBLE | WS_CHILD,
 									 gb3.sizeAndPos.getXContent(leftPos), gb3.sizeAndPos.getYContent(), gb3.sizeAndPos.getContentWidth(-leftPos), config::aside::elementHeight,
 									 hWnd, (HMENU)((size_t)IDC_LIGHT_GROUPBOX + 1), createParams->hInstance, nullptr);
@@ -252,7 +252,7 @@ GroupBox createFigureGroupBox(LPWSTR title, SizeAndPos& size, int leftPos, HWND 
 				  WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON | SS_CENTERIMAGE,
 				  gb.sizeAndPos.getXContent(), y, leftPos, config::aside::elementHeight,
 				  parent, nullptr, hInstance, nullptr);
-	tmp = CreateWindowW(CONTROL_XYZ, nullptr,
+	tmp = CreateWindowW(IDN_XYZ_CONTROL, nullptr,
 						WS_VISIBLE | WS_CHILD,
 						gb.sizeAndPos.getXContent(leftPos), y, gb.sizeAndPos.getContentWidth(-leftPos), config::aside::elementHeight,
 						parent, (HMENU)((size_t)boxNum + 2), hInstance, nullptr);
@@ -266,7 +266,7 @@ GroupBox createFigureGroupBox(LPWSTR title, SizeAndPos& size, int leftPos, HWND 
 				  WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON | SS_CENTERIMAGE,
 				  gb.sizeAndPos.getXContent(), y, leftPos, config::aside::elementHeight,
 				  parent, nullptr, hInstance, nullptr);
-	tmp = CreateWindowW(CONTROL_XYZ, nullptr,
+	tmp = CreateWindowW(IDN_XYZ_CONTROL, nullptr,
 						WS_VISIBLE | WS_CHILD,
 						gb.sizeAndPos.getXContent(leftPos), y, gb.sizeAndPos.getContentWidth(-leftPos), config::aside::elementHeight,
 						parent, (HMENU)((size_t)boxNum + 3), hInstance, nullptr);
@@ -279,7 +279,7 @@ GroupBox createFigureGroupBox(LPWSTR title, SizeAndPos& size, int leftPos, HWND 
 				  WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON | SS_CENTERIMAGE,
 				  gb.sizeAndPos.getXContent(), y, leftPos, config::aside::elementHeight,
 				  parent, nullptr, hInstance, nullptr);
-	tmp = CreateWindowW(CONTROL_XYZ, nullptr,
+	tmp = CreateWindowW(IDN_XYZ_CONTROL, nullptr,
 						WS_VISIBLE | WS_CHILD,
 						gb.sizeAndPos.getXContent(leftPos), y, gb.sizeAndPos.getContentWidth(-leftPos), config::aside::elementHeight,
 						parent, (HMENU)((size_t)boxNum + 4), hInstance, nullptr);

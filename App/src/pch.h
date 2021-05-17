@@ -6,3 +6,6 @@
 #include <Commdlg.h>
 #include <commctrl.h>
 #include <windowsx.h>
+
+#include "config.h"
+#include "Log/Log.h"

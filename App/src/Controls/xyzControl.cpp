@@ -19,7 +19,7 @@ ATOM RegisterXYZControlWindowClass(HINSTANCE hInstance) {
 	wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
 	wcex.hbrBackground = (HBRUSH)0;
 	wcex.lpszMenuName = nullptr;
-	wcex.lpszClassName = CONTROL_XYZ;
+	wcex.lpszClassName = IDN_XYZ_CONTROL;
 	wcex.hIconSm = nullptr;
 	return RegisterClassExW(&wcex);
 }
@@ -36,7 +36,7 @@ ATOM RegisterLableWithAditControlWindowClass(HINSTANCE hInstance) {
 	wcexLabelEdit.hCursor = LoadCursor(nullptr, IDC_ARROW);
 	wcexLabelEdit.hbrBackground = (HBRUSH)0;
 	wcexLabelEdit.lpszMenuName = nullptr;
-	wcexLabelEdit.lpszClassName = CONTROL_LABEL_WITH_EDIT;
+	wcexLabelEdit.lpszClassName = IDN_LABEL_WITH_EDIT;
 	wcexLabelEdit.hIconSm = nullptr;
 	return RegisterClassExW(&wcexLabelEdit);
 }
@@ -60,15 +60,15 @@ LRESULT CALLBACK xyzControlWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARA
 			LPCREATESTRUCT createParams = (LPCREATESTRUCT)lParam;
 			int sectionWidth = (createParams->cx - 10) / 3;
 			int height = createParams->cy;
-			CreateWindowW(CONTROL_LABEL_WITH_EDIT, TEXT("X"),
+			CreateWindowW(IDN_LABEL_WITH_EDIT, TEXT("X"),
 						  WS_VISIBLE | WS_CHILD,
 						  0, 0, sectionWidth, height,
 						  hWnd, (HMENU)IDC_X, createParams->hInstance, nullptr);
-			CreateWindowW(CONTROL_LABEL_WITH_EDIT, TEXT("Y"),
+			CreateWindowW(IDN_LABEL_WITH_EDIT, TEXT("Y"),
 						  WS_VISIBLE | WS_CHILD,
 						  sectionWidth + 5, 0, sectionWidth, height,
 						  hWnd, (HMENU)IDC_Y, createParams->hInstance, nullptr);
-			CreateWindowW(CONTROL_LABEL_WITH_EDIT, TEXT("Z"),
+			CreateWindowW(IDN_LABEL_WITH_EDIT, TEXT("Z"),
 						  WS_VISIBLE | WS_CHILD,
 						  (sectionWidth + 5) * 2, 0, sectionWidth, height,
 						  hWnd, (HMENU)IDC_Z, createParams->hInstance, nullptr);

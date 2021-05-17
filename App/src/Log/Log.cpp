@@ -1,11 +1,10 @@
 #include "pch.h"
 #include "Log/Log.h"
 
-#include <Windows.h>
-#include <stdio.h>
-#include <stdarg.h>
 #include <ctime>
 #include <chrono>
+#include <stdio.h>
+#include <stdarg.h>
 
 static HANDLE hConsole;
 static HWND hWnd;

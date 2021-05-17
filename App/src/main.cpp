@@ -1,16 +1,12 @@
-﻿#include "pch.h"
+#include "pch.h"
 
-#include "config.h"
-#include "aside.h"
-#include "content.h"
+#include "Controls/aside.h"
+#include "Controls/content.h"
 
-#include "stuff.h"
+#include "stuff/stuff.h"
 
-#include "Log/Log.h"
 
-constexpr auto IDN_MAIN_WINDOW = TEXT("MAIN");
-constexpr auto IDN_ASIDE = TEXT("ASIDE");
-constexpr auto IDN_CONTENT = TEXT("CONTENT");
+#define IDN_MAIN_WINDOW TEXT("MAIN")
 
 #define IDC_ASIDE	0x001
 #define IDC_CONTENT 0x002
@@ -35,8 +31,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 	stuff::init();
 
 	RegisterWindowClass(hInstance);
-	RegisterAsideWindowClass(hInstance, IDN_ASIDE);
-	RegisterContentWindowClass(hInstance, IDN_CONTENT);
+	RegisterAsideWindowClass(hInstance);
+	RegisterContentWindowClass(hInstance);
 
 	// Выполнить инициализацию приложения:
 	if (!InitInstance(hInstance, nCmdShow))
