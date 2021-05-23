@@ -59,8 +59,8 @@ void stuff::changeCamera(double dx, double dy, bool isAngle){
 		xCameraPosition -= dx * config::camera::positionMultiplier;
 		yCameraPosition += dy *config::camera::positionMultiplier;
 	}
-	if (pitchCameraAngle > 90) pitchCameraAngle = 90;
-	if (pitchCameraAngle < -90) pitchCameraAngle = -90;
+	if (pitchCameraAngle > 89) pitchCameraAngle = 89;
+	if (pitchCameraAngle < -89) pitchCameraAngle = -89;
 	double x = std::cos(toRad(yawCameraAngle)) * std::cos(toRad(pitchCameraAngle));
 	double y = std::sin(toRad(pitchCameraAngle));
 	double z = std::sin(toRad(yawCameraAngle)) * std::cos(toRad(pitchCameraAngle));

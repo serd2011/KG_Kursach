@@ -10,12 +10,6 @@ const ML::mat4<double>& RNDR::Camera::getProjectionMatrix() const {
 	return this->matrix;
 }
 
-void RNDR::Camera::setFov(int fovx, int fovy) {
-	this->fovx = fovx;
-	this->fovy = fovy;
-	this->recalculateMatrix();
-}
-
 void RNDR::Camera::setPosition(ML::vec4<double> position, ML::vec4<double>target) {
 	this->position = position;
 	this->target = target;
