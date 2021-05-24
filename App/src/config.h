@@ -11,11 +11,12 @@ namespace config {
 
 	namespace aside {
 		constexpr int elementHeight = 25;
-		
+
 		namespace fontSize {
 			constexpr int small = 12;
 			constexpr int normal = 14;
 		}
+
 		//colors
 	#ifndef APP_DARK_THEME
 		constexpr COLORREF background = 0xF1F1F1;
@@ -53,40 +54,40 @@ namespace config {
 	namespace objects {
 		namespace figure1 {
 			constexpr int positionX = -100;
-			constexpr int positionY = 600;
+			constexpr int positionY = 250;
 			constexpr int positionZ = 0;
-			constexpr int rotationX = 100;
+			constexpr int rotationX = 0;
 			constexpr int rotationY = 0;
-			constexpr int rotationZ = 70;
-			constexpr int scaleX = 200;
-			constexpr int scaleY = 200;
-			constexpr int scaleZ = 200;
+			constexpr int rotationZ = 0;
+			constexpr int scaleX = 150;
+			constexpr int scaleY = 150;
+			constexpr int scaleZ = 150;
 			constexpr COLORREF color = 0x0055FF;
 		}
 		namespace figure2 {
-			constexpr int positionX = 300;
-			constexpr int positionY = 500;
-			constexpr int positionZ = 60;
-			constexpr int rotationX = -40;
-			constexpr int rotationY = 170;
+			constexpr int positionX = 40;
+			constexpr int positionY = 330;
+			constexpr int positionZ = 50;
+			constexpr int rotationX = 0;
+			constexpr int rotationY = 20;
 			constexpr int rotationZ = 0;
-			constexpr int scaleX = 280;
-			constexpr int scaleY = 210;
-			constexpr int scaleZ = 210;
+			constexpr int scaleX = 180;
+			constexpr int scaleY = 200;
+			constexpr int scaleZ = 200;
 			constexpr COLORREF color = 0xFF5500;
 		}
 		namespace light {
-			constexpr int positionX = 0;
-			constexpr int positionY = 500;
-			constexpr int positionZ = 300;
+			constexpr int positionX = 500;
+			constexpr int positionY = 1500;
+			constexpr int positionZ = 1000;
 		}
 	}
 
 	namespace camera {
-		constexpr double yawAngle = 90.0;
-		constexpr double pitchAngle = 15.0;
+		constexpr double yawAngle = 105.0;
+		constexpr double pitchAngle = 10.0;
 		constexpr double cameraX = 0;
-		constexpr double cameraY = 400;
+		constexpr double cameraY = 250;
 		constexpr double angleMultiplier = 200;
 		constexpr double positionMultiplier = 500;
 	}

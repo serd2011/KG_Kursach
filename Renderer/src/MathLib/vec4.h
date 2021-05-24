@@ -53,6 +53,8 @@ namespace ML {
 		template<typename U>
 		vec4(const vec4<U>&);
 
+		vec4& operator*(T);
+
 		vec4& operator=(const vec4&);
 		template<typename U>
 		vec4<T>& operator=(const vec4<U>&);
@@ -116,6 +118,15 @@ inline ML::vec4<T>::vec4(const vec4<U>& in) {
 	data[1] = static_cast<T>(in.data[1]);
 	data[2] = static_cast<T>(in.data[2]);
 	data[3] = static_cast<T>(in.data[3]);
+}
+
+template<typename T>
+inline ML::vec4<T>& ML::vec4<T>::operator*(T a) {
+	data[0] *= a;
+	data[1] *= a;
+	data[2] *= a;
+	data[3] *= a;
+	return *this;
 }
 
 template<typename T>
