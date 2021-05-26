@@ -378,3 +378,4 @@ LRESULT CALLBACK EditSubClassProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
 	}
 	return DefSubclassProc(hWnd, uMsg, wParam, lParam);
 }
+

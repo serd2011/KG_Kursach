@@ -34,7 +34,7 @@ project "App"
 
     filter "configurations:Release"
         runtime "Release"
-        optimize "On"
+        optimize "Speed"
 
     filter "action:vs*"
         buildoptions {"/utf-8"}

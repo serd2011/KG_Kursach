@@ -76,8 +76,8 @@ ML::mat4<T> ML::scale(const mat4<T>& m, const vec4<T>& v) {
 
 template<typename T>
 ML::mat4<T> ML::getShadow(const mat4<T>& m, const vec4<T>& light) {
-	ML::vec4<double> p0 = m[0] + ((m[0] - light) * ((-m[0][1]) / (m[0][1] - light[1])));
-	ML::vec4<double> p1 = m[1] + ((m[1] - light) * ((-m[1][1]) / (m[1][1] - light[1])));
-	ML::vec4<double> p2 = m[2] + ((m[2] - light) * ((-m[2][1]) / (m[2][1] - light[1])));
-	return ML::mat4<double>(p0, p1, p2);
+	ML::vec4<T> p0 = m[0] + ((m[0] - light) * ((-m[0][1]) / (m[0][1] - light[1])));
+	ML::vec4<T> p1 = m[1] + ((m[1] - light) * ((-m[1][1]) / (m[1][1] - light[1])));
+	ML::vec4<T> p2 = m[2] + ((m[2] - light) * ((-m[2][1]) / (m[2][1] - light[1])));
+	return ML::mat4<T>(p0, p1, p2);
 }
