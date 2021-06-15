@@ -26,3 +26,7 @@ components::Transform& RNDR::Scene::getTransform(size_t index) {
 void Scene::addLight(const components::Light& light) {
 	this->light = light;
 }
+
+components::Light& Scene::getLight() {
+	return this->light;
+}

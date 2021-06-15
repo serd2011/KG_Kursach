@@ -5,6 +5,7 @@
 #include <chrono>
 #include <stdio.h>
 #include <stdarg.h>
+#include <string>
 
 static HANDLE hConsole;
 static HWND hWnd;

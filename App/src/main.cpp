@@ -28,7 +28,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 	// Инициализация логгера
 	LOG::init();
 	LOG_HIDE();
-	stuff::init();
 
 	RegisterWindowClass(hInstance);
 	RegisterAsideWindowClass(hInstance);
@@ -87,10 +86,20 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow) {
 // Обрабатывает сообщения в главном окне.
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
 	switch (message) {
+	case WM_NCCREATE:
+		{
+			stuff::Scene* scene = new stuff::Scene();
+			if (scene == nullptr) return FALSE;
+			SetWindowLongPtr(hWnd, GWLP_USERDATA, (LONG_PTR)scene);
+			return TRUE;
+		}
+		break;
 	case WM_CREATE:
 		{
-			hWndAside = CreateWindowEx(WS_EX_TOPMOST, IDN_ASIDE, nullptr, WS_CHILD | WS_VISIBLE, 0, 0, config::asideWidth, 0, hWnd, (HMENU)IDC_ASIDE, hInst, nullptr);
-			hWndContent = CreateWindowEx(WS_EX_TOPMOST, IDN_CONTENT, nullptr, WS_CHILD | WS_VISIBLE, config::asideWidth, 0, 0, 0, hWnd, (HMENU)IDC_CONTENT, hInst, nullptr);
+			stuff::Scene* scene = (stuff::Scene*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
+			hWndAside = CreateWindowEx(WS_EX_TOPMOST, IDN_ASIDE, nullptr, WS_CHILD | WS_VISIBLE, 0, 0, config::asideWidth, 0, hWnd, (HMENU)IDC_ASIDE, hInst, scene);
+			hWndContent = CreateWindowEx(WS_EX_TOPMOST, IDN_CONTENT, nullptr, WS_CHILD | WS_VISIBLE, config::asideWidth, 0, 0, 0, hWnd, (HMENU)IDC_CONTENT, hInst, scene);
+			SendMessage(hWnd, ASIDE_RESET, 0, 0);
 		}
 		break;
 	case WM_SIZE:
@@ -114,7 +123,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 			SetWindowPos(hWndContent, nullptr, asideWidth, 0, (mainWidth - asideWidth), mainHeight, SWP_NOZORDER);
 			RedrawWindow(hWnd, NULL, NULL, RDW_UPDATENOW);
 		}
-		break;	
+		break;
 	case WM_GETMINMAXINFO:
 		{
 			LPMINMAXINFO lpMMI = (LPMINMAXINFO)lParam;
@@ -123,7 +132,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 		}
 		break;
 	case WM_KEYUP:
-		if (wParam == VK_OEM_3){
+		if (wParam == VK_OEM_3) {
 			if (isLogConsoleShown) LOG_HIDE();
 			else LOG_SHOW();
 			isLogConsoleShown = !isLogConsoleShown;
@@ -131,14 +140,36 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 		break;
 	case WM_COMMAND:
 		break;
-	case CONTENT_REQUEST_REDRAW:
 	case ASIDE_REQUEST_REDRAW:
-		RedrawWindow(hWndContent, NULL, NULL, RDW_INVALIDATE|RDW_UPDATENOW);
+		RedrawWindow(hWndContent, NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW);
+		break;
+	case ASIDE_RESET:
+		{
+			stuff::Scene* scene = (stuff::Scene*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
+
+			scene->changeFigure(0, stuff::TransfromType::Translation, config::objects::figure1::positionX, config::objects::figure1::positionY, config::objects::figure1::positionZ);
+			scene->changeFigure(0, stuff::TransfromType::Rotation, config::objects::figure1::rotationX, config::objects::figure1::rotationY, config::objects::figure1::rotationZ);
+			scene->changeFigure(0, stuff::TransfromType::Scale, config::objects::figure1::scaleX, config::objects::figure1::scaleY, config::objects::figure1::scaleZ);
+
+			scene->changeFigure(1, stuff::TransfromType::Translation, config::objects::figure2::positionX, config::objects::figure2::positionY, config::objects::figure2::positionZ);
+			scene->changeFigure(1, stuff::TransfromType::Rotation, config::objects::figure2::rotationX, config::objects::figure2::rotationY, config::objects::figure2::rotationZ);
+			scene->changeFigure(1, stuff::TransfromType::Scale, config::objects::figure2::scaleX, config::objects::figure2::scaleY, config::objects::figure2::scaleZ);
+
+			scene->changeLight(config::objects::light::positionX, config::objects::light::positionY, config::objects::light::positionZ);
+
+			SendMessage(hWndAside, ASIDE_RESET, 0, 0);
+			SendMessage(hWndContent, CONTENT_RESET, 0, 0);
+			RedrawWindow(hWndContent, NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW);
+		}
 		break;
 	case WM_PAINT:
 		break;
 	case WM_DESTROY:
-		PostQuitMessage(0);
+		{
+			stuff::Scene* scene = (stuff::Scene*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
+			delete scene;
+			PostQuitMessage(0);
+		}
 		break;
 	default:
 		return DefWindowProc(hWnd, message, wParam, lParam);

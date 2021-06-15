@@ -113,6 +113,9 @@ LRESULT CALLBACK AsideWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 	case WM_CREATE:
 		{
 			LPCREATESTRUCT createParams = (LPCREATESTRUCT)lParam;
+			stuff::Scene* scene = (stuff::Scene*)createParams->lpCreateParams;
+			SetWindowLongPtr(hWnd, GWLP_USERDATA, (LONG_PTR)scene);
+
 			int leftPos;
 			{
 				HDC hdc;
@@ -128,10 +131,12 @@ LRESULT CALLBACK AsideWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			// Фигура 1
 			SizeAndPos size{ 10,10,(createParams->cx - 20),0 ,{20,10,12,10} };
 			GroupBox gb1 = createFigureGroupBox(TEXT("Куб"), size, leftPos, hWnd, createParams->hInstance, IDC_GROUPBOX_1);
+			scene->addFigure(stuff::FigureType::Cube, config::objects::figure1::color);
 			// Фигура 2
 			SizeAndPos size2 = size;
 			size2.y = size.y + size.height + 20;
 			GroupBox gb2 = createFigureGroupBox(TEXT("Треугольная пирамида"), size2, leftPos, hWnd, createParams->hInstance, IDC_GROUPBOX_2);
+			scene->addFigure(stuff::FigureType::TriangularPyramid, config::objects::figure2::color);
 			// Свет
 			SizeAndPos size3 = size2;
 			size3.y = size2.y + size2.height + 20;
@@ -143,12 +148,12 @@ LRESULT CALLBACK AsideWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 						  gb3.sizeAndPos.getXContent(), gb3.sizeAndPos.getYContent(), leftPos, config::aside::elementHeight,
 						  hWnd, nullptr, createParams->hInstance, nullptr);
 			HWND lightPositionXYZControl = CreateWindowW(IDN_XYZ_CONTROL, nullptr,
-									 WS_VISIBLE | WS_CHILD,
-									 gb3.sizeAndPos.getXContent(leftPos), gb3.sizeAndPos.getYContent(), gb3.sizeAndPos.getContentWidth(-leftPos), config::aside::elementHeight,
-									 hWnd, (HMENU)((size_t)IDC_LIGHT_GROUPBOX + 1), createParams->hInstance, nullptr);
+														 WS_VISIBLE | WS_CHILD,
+														 gb3.sizeAndPos.getXContent(leftPos), gb3.sizeAndPos.getYContent(), gb3.sizeAndPos.getContentWidth(-leftPos), config::aside::elementHeight,
+														 hWnd, (HMENU)((size_t)IDC_LIGHT_GROUPBOX + 1), createParams->hInstance, nullptr);
 			SendMessage(lightPositionXYZControl, UDM_SETRANGE, 0, MAKELPARAM(-5000, 5000));
 			SendMessage(lightPositionXYZControl, XYZ_SET_COLOR, (WPARAM)&xyzColorInfo, 0);
-			SendMessage(lightPositionXYZControl, XYZ_CHANGE_DATA, 0, 0);			
+			SendMessage(lightPositionXYZControl, XYZ_CHANGE_DATA, 0, 0);
 
 			// Кнопка сбросить
 			hWndButton = CreateWindowW(WC_BUTTON, TEXT("Сбросить"),
@@ -186,40 +191,40 @@ LRESULT CALLBACK AsideWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 	case WM_COMMAND:
 		switch (wParam) {
 		case IDC_BUTTON_RESET:
-			{
-				SendMessage(GetDlgItem(hWnd, IDC_GROUPBOX_1 + 2), XYZ_CHANGE_DATA, MAKEWPARAM(config::objects::figure1::positionX, config::objects::figure1::positionY), MAKELPARAM(config::objects::figure1::positionZ, 0));
-				SendMessage(GetDlgItem(hWnd, IDC_GROUPBOX_1 + 3), XYZ_CHANGE_DATA, MAKEWPARAM(config::objects::figure1::rotationX, config::objects::figure1::rotationY), MAKELPARAM(config::objects::figure1::rotationZ, 0));
-				SendMessage(GetDlgItem(hWnd, IDC_GROUPBOX_1 + 4), XYZ_CHANGE_DATA, MAKEWPARAM(config::objects::figure1::scaleX, config::objects::figure1::scaleY), MAKELPARAM(config::objects::figure1::scaleZ, 0));
-				SendMessage(GetDlgItem(hWnd, IDC_GROUPBOX_2 + 2), XYZ_CHANGE_DATA, MAKEWPARAM(config::objects::figure2::positionX, config::objects::figure2::positionY), MAKELPARAM(config::objects::figure2::positionZ, 0));
-				SendMessage(GetDlgItem(hWnd, IDC_GROUPBOX_2 + 3), XYZ_CHANGE_DATA, MAKEWPARAM(config::objects::figure2::rotationX, config::objects::figure2::rotationY), MAKELPARAM(config::objects::figure2::rotationZ, 0));
-				SendMessage(GetDlgItem(hWnd, IDC_GROUPBOX_2 + 4), XYZ_CHANGE_DATA, MAKEWPARAM(config::objects::figure2::scaleX, config::objects::figure2::scaleY), MAKELPARAM(config::objects::figure2::scaleZ, 0));
-				SendMessage(GetDlgItem(hWnd, IDC_LIGHT_GROUPBOX + 1), XYZ_CHANGE_DATA, MAKEWPARAM(config::objects::light::positionX, config::objects::light::positionY), MAKELPARAM(config::objects::light::positionZ, 0));
-
-				stuff::resetAll();
-
-				SendMessage(GetParent(hWnd), ASIDE_REQUEST_REDRAW, 0, 0);
-			}break;	
+			SendMessage(GetParent(hWnd), ASIDE_RESET, 0, 0);
+			break;
 		}
+		break;
+	case ASIDE_RESET:
+		SendMessage(GetDlgItem(hWnd, IDC_GROUPBOX_1 + 2), XYZ_CHANGE_DATA, MAKEWPARAM(config::objects::figure1::positionX, config::objects::figure1::positionY), MAKELPARAM(config::objects::figure1::positionZ, 0));
+		SendMessage(GetDlgItem(hWnd, IDC_GROUPBOX_1 + 3), XYZ_CHANGE_DATA, MAKEWPARAM(config::objects::figure1::rotationX, config::objects::figure1::rotationY), MAKELPARAM(config::objects::figure1::rotationZ, 0));
+		SendMessage(GetDlgItem(hWnd, IDC_GROUPBOX_1 + 4), XYZ_CHANGE_DATA, MAKEWPARAM(config::objects::figure1::scaleX, config::objects::figure1::scaleY), MAKELPARAM(config::objects::figure1::scaleZ, 0));
+		SendMessage(GetDlgItem(hWnd, IDC_GROUPBOX_2 + 2), XYZ_CHANGE_DATA, MAKEWPARAM(config::objects::figure2::positionX, config::objects::figure2::positionY), MAKELPARAM(config::objects::figure2::positionZ, 0));
+		SendMessage(GetDlgItem(hWnd, IDC_GROUPBOX_2 + 3), XYZ_CHANGE_DATA, MAKEWPARAM(config::objects::figure2::rotationX, config::objects::figure2::rotationY), MAKELPARAM(config::objects::figure2::rotationZ, 0));
+		SendMessage(GetDlgItem(hWnd, IDC_GROUPBOX_2 + 4), XYZ_CHANGE_DATA, MAKEWPARAM(config::objects::figure2::scaleX, config::objects::figure2::scaleY), MAKELPARAM(config::objects::figure2::scaleZ, 0));
+		SendMessage(GetDlgItem(hWnd, IDC_LIGHT_GROUPBOX + 1), XYZ_CHANGE_DATA, MAKEWPARAM(config::objects::light::positionX, config::objects::light::positionY), MAKELPARAM(config::objects::light::positionZ, 0));
 		break;
 	case XYZ_CHANGE_DATA:
 		{
+			stuff::Scene* scene = (stuff::Scene*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
+
 			int idc = (int)wParam;
 			const Data* data = (const Data*)lParam;
 			int fugireNum = (idc >> 4) & 0xF;
 			if (fugireNum > 2) break;
 			if (fugireNum == 2) {
-				stuff::changeLight(data->x, data->y, data->z);
+				scene->changeLight(data->x, data->y, data->z);
 			} else {
 				int xyzNum = idc & 0xF;
 				switch (xyzNum) {
 				case 2:
-					stuff::changeFigure(fugireNum, stuff::TransfromType::Translation, data->x, data->y, data->z);
+					scene->changeFigure(fugireNum, stuff::TransfromType::Translation, data->x, data->y, data->z);
 					break;
 				case 3:
-					stuff::changeFigure(fugireNum, stuff::TransfromType::Rotation, data->x, data->y, data->z);
+					scene->changeFigure(fugireNum, stuff::TransfromType::Rotation, data->x, data->y, data->z);
 					break;
 				case 4:
-					stuff::changeFigure(fugireNum, stuff::TransfromType::Scale, data->x, data->y, data->z);
+					scene->changeFigure(fugireNum, stuff::TransfromType::Scale, data->x, data->y, data->z);
 					break;
 				}
 			}

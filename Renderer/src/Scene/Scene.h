@@ -26,6 +26,7 @@ namespace RNDR {
 		components::Transform& getTransform(size_t index);
 
 		void addLight(const components::Light&);
+		components::Light& getLight();
 
 	private:
 		std::vector<components::Mesh> meshes;

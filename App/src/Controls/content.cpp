@@ -26,33 +26,40 @@ ATOM RegisterContentWindowClass(HINSTANCE hInstance) {
 struct Data {
 	int prevX;
 	int prevY;
+	stuff::Viewport viewport;
+	Data(stuff::Scene* scene, int backgroungColor) :viewport(scene, backgroungColor) {};
 };
 
 LRESULT CALLBACK contentWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
 	switch (message) {
-	case WM_NCCREATE:
+	case WM_CREATE:
 		{
-			Data* data = new Data();
+			LPCREATESTRUCT createParams = (LPCREATESTRUCT)lParam;
+			stuff::Scene* scene = (stuff::Scene*)createParams->lpCreateParams;
+			Data* data = new Data(scene,config::content::background);
 			if (data == nullptr) return FALSE;
 			SetWindowLongPtr(hWnd, GWLP_USERDATA, (LONG_PTR)data);
-			return TRUE;
 		}
 		break;
 	case WM_SIZE:
 		{
+			Data* data = (Data*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
+
 			RECT rect;
 			GetClientRect(hWnd, &rect);
 			int width = rect.right - rect.left;
 			int height = rect.bottom - rect.top;
 
-			stuff::changeDimensions(width, height);
+			data->viewport.changeDimensions(width, height);
 		}
 		break;
 	case WM_PAINT:
 		{
+			Data* data = (Data*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
+
 			PAINTSTRUCT ps;
 			HDC hdc = BeginPaint(hWnd, &ps);
-			stuff::draw(hdc);
+			data->viewport.draw(hdc);
 			EndPaint(hWnd, &ps);
 		}
 		break;
@@ -72,9 +79,15 @@ LRESULT CALLBACK contentWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 				data->prevY = y;
 				double dxRel = (double)dx / (double)width;
 				double dyRel = (double)dy / (double)height;
-				stuff::changeCamera(dxRel, dyRel, (bool)(wParam & MK_LBUTTON));				
-				SendMessage(GetParent(hWnd), CONTENT_REQUEST_REDRAW, 0, 0);				
+				data->viewport.changeCamera(dxRel, dyRel, (bool)(wParam & MK_LBUTTON));
+				RedrawWindow(hWnd, NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW);						
 			}
+		}
+		break;
+	case CONTENT_RESET:
+		{
+			Data* data = (Data*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
+			data->viewport.reset();
 		}
 		break;
 	case WM_MBUTTONDOWN:
